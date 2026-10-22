@@ -1,172 +1,710 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trang chủ (đã cập nhật tuần) · Chăm con 360</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style id="theme">
-/* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trang chủ (đã cập nhật tuần) · Chăm con 360</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style id="theme">
+    /* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
    NGUỒN DUY NHẤT của mọi tinh chỉnh kích thước. Sửa ở đây rồi chạy: python3 tools/apply-theme.py
    Nguyên tắc: ưu tiên class Bootstrap; chỉ ghi đè biến --bs-* ; chỉ viết rule riêng khi Bootstrap không có class tương ứng. */
-:root{
-  --bs-body-font-size:.875rem;            /* bodyMedium 14 */
-  --bs-body-line-height:1.5;
-  --bs-border-radius:.5rem;
-  --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
-  --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
-  --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
-  --bs-link-color:#1f8a70;--bs-link-color-rgb:31,138,112;--bs-link-hover-color:#1a7561;--bs-link-hover-color-rgb:26,117,97;
-}
-.shadow,.shadow-sm{box-shadow:none!important}
+    :root {
+      --bs-body-font-size: .875rem;
+      /* bodyMedium 14 */
+      --bs-body-line-height: 1.5;
+      --bs-border-radius: .5rem;
+      --bs-border-radius-lg: .75rem;
+      /* rounded-3: card, ô nhập = 12 */
+      --bs-border-radius-xl: 1rem;
+      /* rounded-4 = 16 */
+      --bs-border-radius-xxl: 1.75rem;
+      /* rounded-5 = 28 (sheet, dialog) */
+      --bs-link-color: #1f8a70;
+      --bs-link-color-rgb: 31, 138, 112;
+      --bs-link-hover-color: #1a7561;
+      --bs-link-hover-color-rgb: 26, 117, 97;
+    }
 
-/* Button: cao 48 (vùng chạm tối thiểu), pill */
-.btn{--bs-btn-padding-x:1.5rem;--bs-btn-padding-y:0;--bs-btn-font-size:.875rem;--bs-btn-font-weight:500;--bs-btn-border-radius:50rem;
-  min-height:3rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.25;max-width:100%}
-.btn-sm{--bs-btn-padding-x:1rem;min-height:2.5rem;position:relative}
-.btn-sm::after{content:"";position:absolute;inset:-.25rem}           /* nới vùng chạm của nút/chip nhỏ lên 48 */
-.btn-lg{--bs-btn-padding-x:2rem;--bs-btn-font-size:1rem;min-height:3.5rem}
-.btn.rounded-circle{width:3rem;padding:0}.btn-sm.rounded-circle{width:2.5rem}
-.btn-link{--bs-btn-padding-x:.75rem}
+    .shadow,
+    .shadow-sm {
+      box-shadow: none !important
+    }
 
-/* Text field outlined cao 56, bo 4 */
-.form-control,.form-select{--bs-border-radius:.25rem;min-height:3.5rem;font-size:1rem;padding:1rem}
-.form-select{padding-right:2.5rem}
-.form-floating>.form-control,.form-floating>.form-select{height:3.5rem;min-height:3.5rem;padding-top:1.625rem;padding-bottom:.625rem}
-textarea.form-control{min-height:7rem}
-.form-control-sm,.form-select-sm{min-height:3rem;font-size:1rem;padding:.5rem 1rem}
-.form-label{font-size:.75rem;font-weight:500}
-/* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
-.form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
-.form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
-.form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+    /* Button: cao 48 (vùng chạm tối thiểu), pill */
+    .btn {
+      --bs-btn-padding-x: 1.5rem;
+      --bs-btn-padding-y: 0;
+      --bs-btn-font-size: .875rem;
+      --bs-btn-font-weight: 500;
+      --bs-btn-border-radius: 50rem;
+      min-height: 3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      line-height: 1.25;
+      max-width: 100%
+    }
 
-/* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
-.form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
-.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(31,138,112,.25)}
+    .btn-sm {
+      --bs-btn-padding-x: 1rem;
+      min-height: 2.5rem;
+      position: relative
+    }
 
-/* Card outlined bo 12 */
-.card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
-.card.bg-success-subtle{border-color:transparent!important}
+    .btn-sm::after {
+      content: "";
+      position: absolute;
+      inset: -.25rem
+    }
 
-/* AppBar 56 · NavigationBar 80 */
-header.sticky-top{min-height:3.5rem}
-.nav.sticky-bottom{min-height:5rem;align-items:center}
-.nav.sticky-bottom .nav-link{min-height:3rem;padding:0}
+    /* nới vùng chạm của nút/chip nhỏ lên 48 */
+    .btn-lg {
+      --bs-btn-padding-x: 2rem;
+      --bs-btn-font-size: 1rem;
+      min-height: 3.5rem
+    }
 
-/* Tab, pill, segmented */
-.nav{--bs-nav-pills-link-active-bg:var(--bs-success);--bs-nav-link-color:var(--bs-success-text-emphasis);--bs-nav-link-hover-color:var(--bs-success);--bs-nav-link-padding-y:.5rem}
-.nav-tabs .nav-link,.nav-pills .nav-link{min-height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500}
+    .btn.rounded-circle {
+      width: 3rem;
+      padding: 0
+    }
 
-/* ListTile 56 */
-.list-group{--bs-list-group-item-padding-y:.5rem;--bs-list-group-item-padding-x:1rem}
-.list-group-item{min-height:3.5rem}
-.accordion{--bs-accordion-btn-padding-y:1rem}
-.accordion-button{min-height:3.5rem}
+    .btn-sm.rounded-circle {
+      width: 2.5rem
+    }
+
+    .btn-link {
+      --bs-btn-padding-x: .75rem
+    }
+
+    /* Text field outlined cao 56, bo 4 */
+    .form-control,
+    .form-select {
+      --bs-border-radius: .25rem;
+      min-height: 3.5rem;
+      font-size: 1rem;
+      padding: 1rem
+    }
+
+    .form-select {
+      padding-right: 2.5rem
+    }
+
+    .form-floating>.form-control,
+    .form-floating>.form-select {
+      height: 3.5rem;
+      min-height: 3.5rem;
+      padding-top: 1.625rem;
+      padding-bottom: .625rem
+    }
+
+    textarea.form-control {
+      min-height: 7rem
+    }
+
+    .form-control-sm,
+    .form-select-sm {
+      min-height: 3rem;
+      font-size: 1rem;
+      padding: .5rem 1rem
+    }
+
+    .form-label {
+      font-size: .75rem;
+      font-weight: 500
+    }
+
+    /* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
+    .form-check {
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding-left: 0
+    }
+
+    .form-check .form-check-input {
+      float: none;
+      margin: 0;
+      flex-shrink: 0;
+      width: 1.25rem;
+      height: 1.25rem
+    }
+
+    .form-switch .form-check-input {
+      width: 3.25rem;
+      height: 2rem;
+      border-radius: 1rem;
+      background-size: 1.25rem
+    }
+
+    /* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
+    .form-check-input:checked {
+      background-color: var(--bs-success);
+      border-color: var(--bs-success)
+    }
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-check-input:focus {
+      border-color: var(--bs-success);
+      box-shadow: 0 0 0 .25rem rgba(31, 138, 112, .25)
+    }
+
+    /* Card outlined bo 12 */
+    .card {
+      --bs-card-border-radius: .75rem;
+      --bs-card-border-color: var(--bs-border-color);
+      --bs-card-cap-bg: transparent;
+      border: 1px solid var(--bs-border-color) !important
+    }
+
+    .card.bg-success-subtle {
+      border-color: transparent !important
+    }
+
+    /* AppBar 56 · NavigationBar 80 */
+    header.sticky-top {
+      min-height: 3.5rem
+    }
+
+    .nav.sticky-bottom {
+      min-height: 5rem;
+      align-items: center
+    }
+
+    .nav.sticky-bottom .nav-link {
+      min-height: 3rem;
+      padding: 0
+    }
+
+    /* Tab, pill, segmented */
+    .nav {
+      --bs-nav-pills-link-active-bg: var(--bs-success);
+      --bs-nav-link-color: var(--bs-success-text-emphasis);
+      --bs-nav-link-hover-color: var(--bs-success);
+      --bs-nav-link-padding-y: .5rem
+    }
+
+    .nav-tabs .nav-link,
+    .nav-pills .nav-link {
+      min-height: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500
+    }
+
+    /* ListTile 56 */
+    .list-group {
+      --bs-list-group-item-padding-y: .5rem;
+      --bs-list-group-item-padding-x: 1rem
+    }
+
+    .list-group-item {
+      min-height: 3.5rem
+    }
+
+    .accordion {
+      --bs-accordion-btn-padding-y: 1rem
+    }
+
+    .accordion-button {
+      min-height: 3.5rem
+    }
 
 
-.btn-close{width:3rem;height:3rem;padding:0;background-size:1rem;background-position:center}
-summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer}
+    .btn-close {
+      width: 3rem;
+      height: 3rem;
+      padding: 0;
+      background-size: 1rem;
+      background-position: center
+    }
 
-/* Khác */
-.badge{--bs-badge-font-weight:500;--bs-badge-border-radius:.5rem}
-.progress{--bs-progress-height:.5rem}
-.modal{--bs-modal-border-radius:1.75rem}
-.offcanvas{--bs-offcanvas-border-radius:1.75rem}
-.offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
-/* Mobile/tablet: không có hiệu ứng hover */
-.btn:hover:not(.active):not(:active){color:var(--bs-btn-color);background-color:var(--bs-btn-bg);border-color:var(--bs-btn-border-color)}
-.list-group-item-action:hover:not(:active){color:var(--bs-list-group-action-color);background-color:var(--bs-list-group-bg)}
-.nav-link:hover:not(.active){color:var(--bs-nav-link-color)}
-/* Bảng màu thương hiệu (theo logo Chăm con 360): xanh ngọc chủ đạo + 3 chấm Thân·Tâm·Trí */
-:root{--bs-success:#1f8a70;--bs-success-rgb:31,138,112;--bs-success-bg-subtle:#e1efeb;--bs-success-border-subtle:#b9d9cf;--bs-success-text-emphasis:#134f40;
-  --cc-teal:#1f8a70;--cc-coral:#ff5f4f;--cc-orange:#ffa11a;--cc-blue:#4165e0}
-.btn-success{--bs-btn-bg:#1f8a70;--bs-btn-border-color:#1f8a70;--bs-btn-hover-bg:#1c7c65;--bs-btn-hover-border-color:#1c7c65;--bs-btn-active-bg:#176f59;--bs-btn-active-border-color:#176f59;--bs-btn-disabled-bg:#1f8a70;--bs-btn-disabled-border-color:#1f8a70}
-.btn-outline-success{--bs-btn-color:#1f8a70;--bs-btn-border-color:#1f8a70;--bs-btn-hover-bg:#1f8a70;--bs-btn-hover-border-color:#1f8a70;--bs-btn-active-bg:#1f8a70;--bs-btn-active-border-color:#1f8a70}
-.text-bg-success{background-color:#1f8a70!important}
-/* Nhận diện nhẹ: font tiêu đề bo tròn, header có hoạ tiết, nền ngả xanh, nút có chiều sâu */
-h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.display-1,.display-2,.display-3,.display-4,.display-5,.display-6{font-family:Nunito,Inter,system-ui,sans-serif;letter-spacing:-.01em}
-header.bg-success{background-color:#1f8a70!important;background-repeat:no-repeat;
-  background-image:
-    repeating-linear-gradient(90deg,rgba(255,255,255,.75) 0 2px,transparent 2px 40px),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.4) 0 1.5px,transparent 1.5px 8px),
-    radial-gradient(circle at 92% -30%,rgba(255,255,255,.16) 0,rgba(255,255,255,.16) 38px,transparent 39px),
-    radial-gradient(circle at 78% 130%,rgba(245,194,66,.30) 0,rgba(245,194,66,.30) 26px,transparent 27px),
-    linear-gradient(135deg,#2a9a80,#176f59);
-  background-size:100% 11px,100% 6px,auto,auto,auto;
-  background-position:0 100%,0 100%,0 0,0 0,0 0}
-body.bg-light{background-color:#e9f3f1!important;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27 viewBox=%270 0 200 200%27%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Cellipse cx=%2734%27 cy=%2744%27 rx=%279%27 ry=%2712%27 transform=%27rotate%28-15 34 44%29%27/%3E%3Ccircle cx=%2722%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2730%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2738%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2745%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2749%27 cy=%2735%27 r=%272.6%27/%3E%3Cellipse cx=%27148%27 cy=%2740%27 rx=%2713%27 ry=%2716%27/%3E%3Cpath d=%27M148 56l-3 5h6z%27/%3E%3C/g%3E%3Cpath d=%27M148 61c-2 10 6 14 2 26%27 fill=%27none%27 stroke=%27%231f8a70%27 stroke-opacity=%27.10%27 stroke-width=%271.6%27 stroke-linecap=%27round%27/%3E%3Cg fill=%27%23f5c242%27 fill-opacity=%27.28%27%3E%3Cpath d=%27M100 112l4.5 9.5 10.5 1.3-7.7 7.2 2 10.3-9.3-5.2-9.3 5.2 2-10.3-7.7-7.2 10.5-1.3z%27/%3E%3Crect x=%2728%27 y=%27128%27 width=%2726%27 height=%2726%27 rx=%276%27 transform=%27rotate%28-8 41 141%29%27/%3E%3Cpath d=%27M154 128c-7-10-21 0-11 11l11 11 11-11c10-11-4-21-11-11z%27/%3E%3C/g%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Ccircle cx=%27170%27 cy=%2796%27 r=%275%27/%3E%3Ccircle cx=%2770%27 cy=%27182%27 r=%274%27/%3E%3Ccircle cx=%27118%27 cy=%2724%27 r=%273%27/%3E%3C/g%3E%3C/svg%3E");background-size:200px 200px}
-.card{border:2px solid rgba(31,138,112,.22)!important;box-shadow:0 4px 0 rgba(31,138,112,.20)!important;border-radius:1.25rem!important}
-.card.mb-2,.list-group.mb-2{margin-bottom:.875rem!important}
-.card.mt-2.bg-warning-subtle,.card.mt-3{margin-top:1rem!important}
-.list-group.rounded-4{border:2px solid rgba(31,138,112,.22);box-shadow:0 4px 0 rgba(31,138,112,.20)}
-.card.bg-warning-subtle{border-color:rgba(255,161,26,.5)!important;box-shadow:0 4px 0 rgba(255,161,26,.32)!important}
-.btn-success{background-image:linear-gradient(180deg,#2aa085,#1f8a70);box-shadow:0 4px 0 #134f40}
-.btn-warning{box-shadow:0 4px 0 #b08000}
-.btn-outline-success{box-shadow:0 3px 0 rgba(31,138,112,.35)}
-.btn{transition:transform .08s}
-.btn:active{transform:translateY(3px);box-shadow:none!important}
-.progress-bar{border-radius:50rem}
+    summary {
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      cursor: pointer
+    }
 
-/* Dấu ấn thương hiệu: 3 chấm xanh dương · san hô · cam của logo (Thân · Tâm · Trí) ở góc thanh tiêu đề */
-header.bg-success::before{content:"";position:absolute;z-index:-1;right:122px;top:5px;width:7px;height:7px;border-radius:50%;
-  background:var(--cc-coral);box-shadow:-11px 0 0 var(--cc-blue),11px 0 0 var(--cc-orange);opacity:.95;pointer-events:none}
+    /* Khác */
+    .badge {
+      --bs-badge-font-weight: 500;
+      --bs-badge-border-radius: .5rem
+    }
 
-/* Ô chọn / ô nhập cùng ngôn ngữ với thẻ: viền xanh dày, mép đáy, mũi tên xanh thương hiệu */
-.form-select,.form-control{border:2px solid rgba(31,138,112,.3);border-radius:1rem;box-shadow:0 3px 0 rgba(31,138,112,.18);background-color:#fff}
-.form-select{font-weight:600;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231f8a70' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' d='m3 6 5 5 5-5'/%3E%3C/svg%3E");background-size:16px;background-position:right 1rem center}
-.form-floating>label{color:#1f8a70;font-weight:500}
-.form-select:focus,.form-control:focus{border-color:#1f8a70;box-shadow:0 3px 0 rgba(31,138,112,.3),0 0 0 .2rem rgba(31,138,112,.15)}
-.input-group-text{border:2px solid rgba(31,138,112,.3);background:#eef5f2;color:#1f8a70;font-weight:600;border-radius:0 1rem 1rem 0;box-shadow:0 3px 0 rgba(31,138,112,.18)}
-.input-group>.form-control:not(:last-child){border-radius:1rem 0 0 1rem;border-right:0}
-</style>
+    .progress {
+      --bs-progress-height: .5rem
+    }
+
+    .modal {
+      --bs-modal-border-radius: 1.75rem
+    }
+
+    .offcanvas {
+      --bs-offcanvas-border-radius: 1.75rem
+    }
+
+    .offcanvas-bottom {
+      border-radius: 1.75rem 1.75rem 0 0
+    }
+
+    /* Mobile/tablet: không có hiệu ứng hover */
+    .btn:hover:not(.active):not(:active) {
+      color: var(--bs-btn-color);
+      background-color: var(--bs-btn-bg);
+      border-color: var(--bs-btn-border-color)
+    }
+
+    .list-group-item-action:hover:not(:active) {
+      color: var(--bs-list-group-action-color);
+      background-color: var(--bs-list-group-bg)
+    }
+
+    .nav-link:hover:not(.active) {
+      color: var(--bs-nav-link-color)
+    }
+
+    /* Bảng màu thương hiệu (theo logo Chăm con 360): xanh ngọc chủ đạo + 3 chấm Thân·Tâm·Trí */
+    :root {
+      --bs-success: #1f8a70;
+      --bs-success-rgb: 31, 138, 112;
+      --bs-success-bg-subtle: #e1efeb;
+      --bs-success-border-subtle: #b9d9cf;
+      --bs-success-text-emphasis: #134f40;
+      --cc-teal: #1f8a70;
+      --cc-coral: #ff5f4f;
+      --cc-orange: #ffa11a;
+      --cc-blue: #4165e0
+    }
+
+    .btn-success {
+      --bs-btn-bg: #1f8a70;
+      --bs-btn-border-color: #1f8a70;
+      --bs-btn-hover-bg: #1c7c65;
+      --bs-btn-hover-border-color: #1c7c65;
+      --bs-btn-active-bg: #176f59;
+      --bs-btn-active-border-color: #176f59;
+      --bs-btn-disabled-bg: #1f8a70;
+      --bs-btn-disabled-border-color: #1f8a70
+    }
+
+    .btn-outline-success {
+      --bs-btn-color: #1f8a70;
+      --bs-btn-border-color: #1f8a70;
+      --bs-btn-hover-bg: #1f8a70;
+      --bs-btn-hover-border-color: #1f8a70;
+      --bs-btn-active-bg: #1f8a70;
+      --bs-btn-active-border-color: #1f8a70
+    }
+
+    .text-bg-success {
+      background-color: #1f8a70 !important
+    }
+
+    /* Nhận diện nhẹ: font tiêu đề bo tròn, header có hoạ tiết, nền ngả xanh, nút có chiều sâu */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    .display-1,
+    .display-2,
+    .display-3,
+    .display-4,
+    .display-5,
+    .display-6 {
+      font-family: Nunito, Inter, system-ui, sans-serif;
+      letter-spacing: -.01em
+    }
+
+    header.bg-success {
+      background-color: #1f8a70 !important;
+      background-repeat: no-repeat;
+      background-image:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .75) 0 2px, transparent 2px 40px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .4) 0 1.5px, transparent 1.5px 8px),
+        radial-gradient(circle at 92% -30%, rgba(255, 255, 255, .16) 0, rgba(255, 255, 255, .16) 38px, transparent 39px),
+        radial-gradient(circle at 78% 130%, rgba(245, 194, 66, .30) 0, rgba(245, 194, 66, .30) 26px, transparent 27px),
+        linear-gradient(135deg, #2a9a80, #176f59);
+      background-size: 100% 11px, 100% 6px, auto, auto, auto;
+      background-position: 0 100%, 0 100%, 0 0, 0 0, 0 0
+    }
+
+    body.bg-light {
+      background-color: #e9f3f1 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27 viewBox=%270 0 200 200%27%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Cellipse cx=%2734%27 cy=%2744%27 rx=%279%27 ry=%2712%27 transform=%27rotate%28-15 34 44%29%27/%3E%3Ccircle cx=%2722%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2730%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2738%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2745%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2749%27 cy=%2735%27 r=%272.6%27/%3E%3Cellipse cx=%27148%27 cy=%2740%27 rx=%2713%27 ry=%2716%27/%3E%3Cpath d=%27M148 56l-3 5h6z%27/%3E%3C/g%3E%3Cpath d=%27M148 61c-2 10 6 14 2 26%27 fill=%27none%27 stroke=%27%231f8a70%27 stroke-opacity=%27.10%27 stroke-width=%271.6%27 stroke-linecap=%27round%27/%3E%3Cg fill=%27%23f5c242%27 fill-opacity=%27.28%27%3E%3Cpath d=%27M100 112l4.5 9.5 10.5 1.3-7.7 7.2 2 10.3-9.3-5.2-9.3 5.2 2-10.3-7.7-7.2 10.5-1.3z%27/%3E%3Crect x=%2728%27 y=%27128%27 width=%2726%27 height=%2726%27 rx=%276%27 transform=%27rotate%28-8 41 141%29%27/%3E%3Cpath d=%27M154 128c-7-10-21 0-11 11l11 11 11-11c10-11-4-21-11-11z%27/%3E%3C/g%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Ccircle cx=%27170%27 cy=%2796%27 r=%275%27/%3E%3Ccircle cx=%2770%27 cy=%27182%27 r=%274%27/%3E%3Ccircle cx=%27118%27 cy=%2724%27 r=%273%27/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 200px 200px
+    }
+
+    .card {
+      border: 2px solid rgba(31, 138, 112, .22) !important;
+      box-shadow: 0 4px 0 rgba(31, 138, 112, .20) !important;
+      border-radius: 1.25rem !important
+    }
+
+    .card.mb-2,
+    .list-group.mb-2 {
+      margin-bottom: .875rem !important
+    }
+
+    .card.mt-2.bg-warning-subtle,
+    .card.mt-3 {
+      margin-top: 1rem !important
+    }
+
+    .list-group.rounded-4 {
+      border: 2px solid rgba(31, 138, 112, .22);
+      box-shadow: 0 4px 0 rgba(31, 138, 112, .20)
+    }
+
+    .card.bg-warning-subtle {
+      border-color: rgba(255, 161, 26, .5) !important;
+      box-shadow: 0 4px 0 rgba(255, 161, 26, .32) !important
+    }
+
+    .btn-success {
+      background-image: linear-gradient(180deg, #2aa085, #1f8a70);
+      box-shadow: 0 4px 0 #134f40
+    }
+
+    .btn-warning {
+      box-shadow: 0 4px 0 #b08000
+    }
+
+    .btn-outline-success {
+      box-shadow: 0 3px 0 rgba(31, 138, 112, .35)
+    }
+
+    .btn {
+      transition: transform .08s
+    }
+
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: none !important
+    }
+
+    .progress-bar {
+      border-radius: 50rem
+    }
+
+    /* Dấu ấn thương hiệu: 3 chấm xanh dương · san hô · cam của logo (Thân · Tâm · Trí) ở góc thanh tiêu đề */
+    header.bg-success::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      right: 122px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cc-coral);
+      box-shadow: -11px 0 0 var(--cc-blue), 11px 0 0 var(--cc-orange);
+      opacity: .95;
+      pointer-events: none
+    }
+
+    /* Ô chọn / ô nhập cùng ngôn ngữ với thẻ: viền xanh dày, mép đáy, mũi tên xanh thương hiệu */
+    .form-select,
+    .form-control {
+      border: 2px solid rgba(31, 138, 112, .3);
+      border-radius: 1rem;
+      box-shadow: 0 3px 0 rgba(31, 138, 112, .18);
+      background-color: #fff
+    }
+
+    .form-select {
+      font-weight: 600;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231f8a70' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' d='m3 6 5 5 5-5'/%3E%3C/svg%3E");
+      background-size: 16px;
+      background-position: right 1rem center
+    }
+
+    .form-floating>label {
+      color: #1f8a70;
+      font-weight: 500
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+      border-color: #1f8a70;
+      box-shadow: 0 3px 0 rgba(31, 138, 112, .3), 0 0 0 .2rem rgba(31, 138, 112, .15)
+    }
+
+    .input-group-text {
+      border: 2px solid rgba(31, 138, 112, .3);
+      background: #eef5f2;
+      color: #1f8a70;
+      font-weight: 600;
+      border-radius: 0 1rem 1rem 0;
+      box-shadow: 0 3px 0 rgba(31, 138, 112, .18)
+    }
+
+    .input-group>.form-control:not(:last-child) {
+      border-radius: 1rem 0 0 1rem;
+      border-right: 0
+    }
+  </style>
 </head>
-<body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
-<div class="container-fluid mx-auto d-flex flex-column min-vh-100 px-0 shadow-sm" style="max-width:820px">
-  <header class="bg-success text-white pt-3 pb-5 px-3 rounded-bottom-4">
-    <div class="d-flex align-items-center gap-2"><span class="d-inline-grid bg-white rounded-circle p-1" style="width:30px;height:30px;display:inline-grid;grid-template-columns:1fr 1fr;gap:2px"><i class="rounded-circle" style="background:#4263eb"></i><i class="rounded-circle" style="background:#ff6149"></i><i class="rounded-circle" style="background:#ff9800"></i><i class="rounded-circle" style="background:#1f8a70"></i></span><b>CHĂM CON 360</b><span class="small opacity-75 ms-1 flex-grow-1">Tâm · Thân · Trí</span><button type="button" class="btn text-nowrap flex-shrink-0 btn-light btn-sm rounded-circle fw-bold" data-bs-toggle="modal" data-bs-target="#tutorial" aria-label="Hướng dẫn sử dụng">?</button></div>
-  </header>
-  <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
 
-    <div class="card border-0 rounded-4 shadow position-relative mb-2" style="margin-top:-2.5rem"><div class="card-body py-2"><div class="d-flex align-items-center gap-3 w-100"><img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&amp;fit=crop&amp;crop=faces&amp;w=100&amp;h=100&amp;q=80" width="50" height="50" alt="Ảnh Dương Hiền" class="rounded-circle border border-2 border-success object-fit-cover flex-shrink-0"><div class="flex-grow-1 lh-sm"><div class="fw-bold fs-5">Dương Hiền <i class="bi bi-gender-male text-primary" aria-label="Bé trai"></i></div><div class="small text-secondary">13 tuổi · 01/10/2012</div></div><a href="45_chon-be.html" class="text-secondary fs-5 text-decoration-none d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px" aria-label="Chọn bé"><i class="bi bi-chevron-down"></i></a></div></div></div>
-    <div class="card rounded-4 mb-2 text-white" style="background:linear-gradient(135deg,#1f8a70,#176f59);border-color:#134f40!important;box-shadow:0 4px 0 #134f40!important"><div class="card-body p-3"><div class="d-flex align-items-center gap-3"><span class="rounded-circle bg-white d-flex align-items-center justify-content-center fs-2 flex-shrink-0" style="width:56px;height:56px">📏</span><div class="flex-grow-1 lh-sm"><div class="small fw-semibold text-uppercase" style="color:#ffd27a">Miễn phí 1 lần</div><div class="fw-bold fs-5">Con sẽ cao bao nhiêu?</div><div class="small opacity-75 mt-1">Dự đoán chiều cao trưởng thành theo chuẩn WHO</div></div></div><a href="26_chieu-cao-du-doan.html" class="btn btn-warning w-100 mt-3 fw-semibold">Xem dự đoán chiều cao</a></div></div>
-<div class="card rounded-4 mb-2 bg-success-subtle"><div class="card-body p-3">
-      <div class="d-flex justify-content-between align-items-center"><span class="fw-semibold text-success-emphasis"><i class="bi bi-check-circle-fill text-success"></i> Tuần này đã xong</span><span class="small text-success-emphasis">🔥 6 tuần liền</span></div>
-      <div class="small mt-1">Bé cao thêm <span class="text-success fw-semibold">+0.5 cm</span></div>
-      <a href="08_cap-nhat-tuan-ket-qua.html" class="btn btn-outline-success w-100 mt-3">Xem kết quả</a>
-    </div></div>
-    
-    <div class="d-flex align-items-center justify-content-between mt-2 mb-2"><h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small" style="width:28px;height:28px">▤</span>Đánh giá phát triển</h2></div>
-<div class="small text-secondary px-1 mb-2">Điểm 5 lĩnh vực phát triển của con. Chạm từng ô để xem chi tiết hoặc làm đánh giá.</div>
-    <div class="card border-0 rounded-4 shadow-sm mb-2"><div class="card-body p-2"><div class="row g-0 align-items-center"><div class="col-12 col-md-6 mx-auto"><svg class="w-100" viewBox="-10 0 260 230" role="img" aria-label="Biểu đồ radar 5 lĩnh vực">
-<g transform="translate(20,18)" fill="none" stroke="#c9e3dd"><polygon points="100,82 117,94 111,114 89,114 83,94"/><polygon points="100,64 134,89 121,129 79,129 66,89"/><polygon points="100,46 151,83 130,144 70,144 49,83"/><polygon points="100,28 168,77 139,159 61,159 32,77"/><polygon points="100,10 185,72 148,174 52,174 15,72"/><path d="M100 100V10M100 100l85-28M100 100l48 74M100 100l-48 74M100 100 15 72"/></g>
-<g transform="translate(20,18)"><polygon points="100,13 100,100 148,174 63,157 39,80" fill="rgba(31,138,112,.22)" stroke="#1f8a70" stroke-width="2.5" stroke-linejoin="round"/><g fill="#1f8a70"><circle cx="100" cy="13" r="4.5"/><circle cx="148" cy="174" r="4.5"/><circle cx="63" cy="157" r="4.5"/><circle cx="39" cy="80" r="4.5"/></g></g>
-<g font-size="12" font-weight="700" fill="#212529" text-anchor="middle"><text x="120" y="14">Thể chất</text><text x="215" y="78">Trí tuệ</text><text x="172" y="218">Học lực</text><text x="68" y="218">Cảm xúc</text><text x="25" y="78">Vượt khó</text></g></svg></div></div></div></div>
-    <div class="row row-cols-3 g-2 tile-grid">
-<div class="col"><a href="10_pq-tong-quan.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-danger-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">🏃</div><div class="small fw-semibold">Thể chất</div><div class="fs-4 fw-bold text-success">9.7</div></div></a></div>
-<div class="col"><a href="14a_iq-tong-quan_trong.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-warning-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">💡</div><div class="small fw-semibold">Trí tuệ</div><span class="badge rounded-pill bg-success text-white">Làm ngay</span></div></a></div>
-<div class="col"><a href="22b_hoc-ba-lop-1-5_co-du-lieu.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-primary-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">🎓</div><div class="small fw-semibold">Học bạ</div><div class="fs-4 fw-bold text-success">10.0</div></div></a></div>
-<div class="col"><a href="19_eq-tong-quan.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-danger-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">💗</div><div class="small fw-semibold">Cảm xúc</div><div class="fs-4 fw-bold text-success">9.2</div></div></a></div>
-<div class="col"><a href="20_aq-tong-quan.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-info-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">⛰️</div><div class="small fw-semibold">Vượt khó</div><div class="fs-4 fw-bold text-success">7.2</div></div></a></div>
-<div class="col"><a href="21_giai-thich-eq-aq-iq.html" class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100"><div class="card-body text-center p-3"><div class="rounded-circle bg-success-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1" style="width:48px;height:48px">🎯</div><div class="small fw-semibold">Trung bình</div><div class="fs-4 fw-bold text-success">9.0</div></div></a></div>
-    </div>
+<body class="bg-light"
+  style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
+  <div class="container-fluid mx-auto d-flex flex-column min-vh-100 px-0 shadow-sm" style="max-width:820px">
+    <header class="bg-success text-white pt-3 pb-5 px-3 rounded-bottom-4">
+      <div class="d-flex align-items-center gap-2"><span class="d-inline-grid bg-white rounded-circle p-1"
+          style="width:30px;height:30px;display:inline-grid;grid-template-columns:1fr 1fr;gap:2px"><i
+            class="rounded-circle" style="background:#4263eb"></i><i class="rounded-circle"
+            style="background:#ff6149"></i><i class="rounded-circle" style="background:#ff9800"></i><i
+            class="rounded-circle" style="background:#1f8a70"></i></span><b>CHĂM CON 360</b><span
+          class="small opacity-75 ms-1 flex-grow-1">Tâm · Thân · Trí</span><button type="button"
+          class="btn text-nowrap flex-shrink-0 btn-light btn-sm rounded-circle fw-bold" data-bs-toggle="modal"
+          data-bs-target="#tutorial" aria-label="Hướng dẫn sử dụng">?</button></div>
+    </header>
+    <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
+
+      <div class="card border-0 rounded-4 shadow position-relative mb-2" style="margin-top:-2.5rem">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center gap-3 w-100"><img
+              src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&amp;fit=crop&amp;crop=faces&amp;w=100&amp;h=100&amp;q=80"
+              width="50" height="50" alt="Ảnh Dương Hiền"
+              class="rounded-circle border border-2 border-success object-fit-cover flex-shrink-0">
+            <div class="flex-grow-1 lh-sm">
+              <div class="fw-bold fs-5">Dương Hiền <i class="bi bi-gender-male text-primary" aria-label="Bé trai"></i>
+              </div>
+              <div class="small text-secondary">13 tuổi · 01/10/2012</div>
+            </div><a href="45_chon-be.html"
+              class="text-secondary fs-5 text-decoration-none d-inline-flex align-items-center justify-content-center"
+              style="width:48px;height:48px" aria-label="Chọn bé"><i class="bi bi-chevron-down"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="card rounded-4 mb-2 text-white"
+        style="background:linear-gradient(135deg,#1f8a70,#176f59);border-color:#134f40!important;box-shadow:0 4px 0 #134f40!important">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center gap-3"><span
+              class="rounded-circle bg-white d-flex align-items-center justify-content-center fs-2 flex-shrink-0"
+              style="width:56px;height:56px">📏</span>
+            <div class="flex-grow-1 lh-sm">
+              <div class="small fw-semibold text-uppercase" style="color:#ffd27a">Miễn phí 1 lần</div>
+              <div class="fw-bold fs-5">Con sẽ cao bao nhiêu?</div>
+              <div class="small opacity-75 mt-1">Dự đoán chiều cao trưởng thành theo chuẩn WHO</div>
+            </div>
+          </div><a href="26_chieu-cao-du-doan.html" class="btn btn-warning w-100 mt-3 fw-semibold">Xem dự đoán chiều
+            cao</a>
+        </div>
+      </div>
+      <div class="card rounded-4 mb-2 bg-success-subtle">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center"><span
+              class="fw-semibold text-success-emphasis"><i class="bi bi-check-circle-fill text-success"></i> Tuần này đã
+              xong</span><span class="small text-success-emphasis">🔥 6 tuần liền</span></div>
+          <div class="small mt-1">Bé cao thêm <span class="text-success fw-semibold">+0.5 cm</span></div>
+          <a href="08_cap-nhat-tuan-ket-qua.html" class="btn btn-outline-success w-100 mt-3">Xem kết quả</a>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between mt-2 mb-2">
+        <h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span
+            class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small"
+            style="width:28px;height:28px">▤</span>Đánh giá phát triển</h2>
+      </div>
+      <div class="small text-secondary px-1 mb-2">Điểm 5 lĩnh vực phát triển của con. Chạm từng ô để xem chi tiết hoặc
+        làm đánh giá.</div>
+      <div class="card border-0 rounded-4 shadow-sm mb-2">
+        <div class="card-body p-2">
+          <div class="row g-0 align-items-center">
+            <div class="col-12 col-md-6 mx-auto"><svg class="w-100" viewBox="-10 0 260 230" role="img"
+                aria-label="Biểu đồ radar 5 lĩnh vực">
+                <g transform="translate(20,18)" fill="none" stroke="#c9e3dd">
+                  <polygon points="100,82 117,94 111,114 89,114 83,94" />
+                  <polygon points="100,64 134,89 121,129 79,129 66,89" />
+                  <polygon points="100,46 151,83 130,144 70,144 49,83" />
+                  <polygon points="100,28 168,77 139,159 61,159 32,77" />
+                  <polygon points="100,10 185,72 148,174 52,174 15,72" />
+                  <path d="M100 100V10M100 100l85-28M100 100l48 74M100 100l-48 74M100 100 15 72" />
+                </g>
+                <g transform="translate(20,18)">
+                  <polygon points="100,13 100,100 148,174 63,157 39,80" fill="rgba(31,138,112,.22)" stroke="#1f8a70"
+                    stroke-width="2.5" stroke-linejoin="round" />
+                  <g fill="#1f8a70">
+                    <circle cx="100" cy="13" r="4.5" />
+                    <circle cx="148" cy="174" r="4.5" />
+                    <circle cx="63" cy="157" r="4.5" />
+                    <circle cx="39" cy="80" r="4.5" />
+                  </g>
+                </g>
+                <g font-size="12" font-weight="700" fill="#212529" text-anchor="middle"><text x="120" y="14">Thể
+                    chất</text><text x="215" y="78">Trí tuệ</text><text x="172" y="218">Học lực</text><text x="68"
+                    y="218">Cảm xúc</text><text x="25" y="78">Vượt khó</text></g>
+              </svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="row row-cols-3 g-2 tile-grid">
+        <div class="col"><a href="10_pq-tong-quan.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-danger-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">🏃</div>
+              <div class="small fw-semibold">Thể chất</div>
+              <div class="fs-4 fw-bold text-success">9.7</div>
+            </div>
+          </a></div>
+        <div class="col"><a href="14a_iq-tong-quan_trong.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-warning-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">💡</div>
+              <div class="small fw-semibold">Trí tuệ</div><span class="badge rounded-pill bg-danger text-white">Làm
+                ngay</span>
+            </div>
+          </a></div>
+        <div class="col"><a href="22b_hoc-ba-lop-1-5_co-du-lieu.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-primary-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">🎓</div>
+              <div class="small fw-semibold">Học bạ</div>
+              <div class="fs-4 fw-bold text-success">10.0</div>
+            </div>
+          </a></div>
+        <div class="col"><a href="19_eq-tong-quan.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-danger-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">💗</div>
+              <div class="small fw-semibold">Cảm xúc</div>
+              <div class="fs-4 fw-bold text-success">9.2</div>
+            </div>
+          </a></div>
+        <div class="col"><a href="20_aq-tong-quan.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-info-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">⛰️</div>
+              <div class="small fw-semibold">Vượt khó</div>
+              <div class="fs-4 fw-bold text-success">7.2</div>
+            </div>
+          </a></div>
+        <div class="col"><a href="21_giai-thich-eq-aq-iq.html"
+            class="card border-0 rounded-4 shadow-sm text-decoration-none text-dark h-100">
+            <div class="card-body text-center p-3">
+              <div
+                class="rounded-circle bg-success-subtle d-inline-flex align-items-center justify-content-center fs-4 mb-1"
+                style="width:48px;height:48px">🎯</div>
+              <div class="small fw-semibold">Trung bình</div>
+              <div class="fs-4 fw-bold text-success">9.0</div>
+            </div>
+          </a></div>
+      </div>
     </main>
-  <nav class="nav nav-fill bg-white border-top shadow sticky-bottom pt-1 pb-2">
-    <a class="nav-link text-success fw-semibold py-1 px-0 d-flex flex-column align-items-center" href="05a_trang-chu_chua-cap-nhat-tuan.html"><span class="position-relative rounded-pill px-3 bg-success-subtle"><i class="bi bi-house-fill fs-4 lh-sm"></i></span><span class="small mt-1">Trang chủ</span></a>
-    <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center" href="09_cong-cu.html"><span class="position-relative rounded-pill px-3 "><i class="bi bi-grid fs-4 lh-sm"></i></span><span class="small mt-1">Công cụ</span></a>
-    <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center" href="37_thong-bao.html"><span class="position-relative rounded-pill px-3 "><i class="bi bi-bell fs-4 lh-sm"></i><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5+</span></span><span class="small mt-1">Thông báo</span></a>
-    <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center" href="38_tai-khoan-menu.html"><span class="position-relative rounded-pill px-3 "><i class="bi bi-person fs-4 lh-sm"></i></span><span class="small mt-1">Tài khoản</span></a>
-  </nav>
-</div>
-<div class="modal fade" id="tutorial" tabindex="-1" aria-labelledby="tut-title" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0">
-  <div class="modal-header border-0 pb-0"><h2 class="modal-title h6 text-secondary" id="tut-title">Hướng dẫn sử dụng</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div>
-  <div class="modal-body pt-0"><div id="tutCarousel" class="carousel slide" data-bs-interval="false"><div class="carousel-inner pt-1 pb-4"><div class="carousel-item active text-center px-2"><div class="display-1">👋</div><h3 class="h5 fw-bold mt-1">Chào mừng bố mẹ</h3><p class="text-secondary mb-2">Chăm con 360 giúp bố mẹ theo dõi và nuôi con phát triển toàn diện: thể chất, trí tuệ, học lực, cảm xúc, vượt khó.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">👶</div><h3 class="h5 fw-bold mt-1">Bước 1: Tạo hồ sơ cho con</h3><p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tạo hồ sơ cho con</b>, nhập tên, giới tính và ngày sinh. Mỗi con là một hồ sơ riêng.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">✅</div><h3 class="h5 fw-bold mt-1">Bước 2: Làm đánh giá</h3><p class="text-secondary mb-2">Chọn Thể chất, Trí tuệ, Học bạ, Cảm xúc hoặc Vượt khó. Điểm của con hiện ngay ở màn <b>Công cụ</b>.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">📏</div><h3 class="h5 fw-bold mt-1">Dự đoán chiều cao</h3><p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tiện ích</b> → <b>Dự đoán chiều cao</b>. Nhập chiều cao hiện tại và chiều cao cách đây 12 tháng.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">🎬</div><h3 class="h5 fw-bold mt-1">Học cùng con mỗi ngày</h3><p class="text-secondary mb-2">Mục <b>Giáo dục</b> có video bài tập theo độ tuổi. Mở khóa toàn bộ bằng gói thành viên.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-dismiss="modal">Bắt đầu dùng app</button></div></div><div class="carousel-indicators mb-0"><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="0" class="bg-success active" aria-label="Bước 1"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="1" class="bg-success" aria-label="Bước 2"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="2" class="bg-success" aria-label="Bước 3"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="3" class="bg-success" aria-label="Bước 4"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="4" class="bg-success" aria-label="Bước 5"></button></div></div></div></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <nav class="nav nav-fill bg-white border-top shadow sticky-bottom pt-1 pb-2">
+      <a class="nav-link text-success fw-semibold py-1 px-0 d-flex flex-column align-items-center"
+        href="05a_trang-chu_chua-cap-nhat-tuan.html"><span
+          class="position-relative rounded-pill px-3 bg-success-subtle"><i
+            class="bi bi-house-fill fs-4 lh-sm"></i></span><span class="small mt-1">Trang chủ</span></a>
+      <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center" href="09_cong-cu.html"><span
+          class="position-relative rounded-pill px-3 "><i class="bi bi-grid fs-4 lh-sm"></i></span><span
+          class="small mt-1">Công cụ</span></a>
+      <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center" href="37_thong-bao.html"><span
+          class="position-relative rounded-pill px-3 "><i class="bi bi-bell fs-4 lh-sm"></i><span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5+</span></span><span
+          class="small mt-1">Thông báo</span></a>
+      <a class="nav-link text-secondary py-1 px-0 d-flex flex-column align-items-center"
+        href="38_tai-khoan-menu.html"><span class="position-relative rounded-pill px-3 "><i
+            class="bi bi-person fs-4 lh-sm"></i></span><span class="small mt-1">Tài khoản</span></a>
+    </nav>
+  </div>
+  <div class="modal fade" id="tutorial" tabindex="-1" aria-labelledby="tut-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header border-0 pb-0">
+          <h2 class="modal-title h6 text-secondary" id="tut-title">Hướng dẫn sử dụng</h2><button type="button"
+            class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div id="tutCarousel" class="carousel slide" data-bs-interval="false">
+            <div class="carousel-inner pt-1 pb-4">
+              <div class="carousel-item active text-center px-2">
+                <div class="display-1">👋</div>
+                <h3 class="h5 fw-bold mt-1">Chào mừng bố mẹ</h3>
+                <p class="text-secondary mb-2">Chăm con 360 giúp bố mẹ theo dõi và nuôi con phát triển toàn diện: thể
+                  chất, trí tuệ, học lực, cảm xúc, vượt khó.</p><button
+                  class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel"
+                  data-bs-slide="next">Tiếp ›</button>
+              </div>
+              <div class="carousel-item text-center px-2">
+                <div class="display-1">👶</div>
+                <h3 class="h5 fw-bold mt-1">Bước 1: Tạo hồ sơ cho con</h3>
+                <p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tạo hồ sơ cho con</b>, nhập tên, giới tính và
+                  ngày sinh. Mỗi con là một hồ sơ riêng.</p><button
+                  class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel"
+                  data-bs-slide="next">Tiếp ›</button>
+              </div>
+              <div class="carousel-item text-center px-2">
+                <div class="display-1">✅</div>
+                <h3 class="h5 fw-bold mt-1">Bước 2: Làm đánh giá</h3>
+                <p class="text-secondary mb-2">Chọn Thể chất, Trí tuệ, Học bạ, Cảm xúc hoặc Vượt khó. Điểm của con hiện
+                  ngay ở màn <b>Công cụ</b>.</p><button
+                  class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel"
+                  data-bs-slide="next">Tiếp ›</button>
+              </div>
+              <div class="carousel-item text-center px-2">
+                <div class="display-1">📏</div>
+                <h3 class="h5 fw-bold mt-1">Dự đoán chiều cao</h3>
+                <p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tiện ích</b> → <b>Dự đoán chiều cao</b>. Nhập
+                  chiều cao hiện tại và chiều cao cách đây 12 tháng.</p><button
+                  class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel"
+                  data-bs-slide="next">Tiếp ›</button>
+              </div>
+              <div class="carousel-item text-center px-2">
+                <div class="display-1">🎬</div>
+                <h3 class="h5 fw-bold mt-1">Học cùng con mỗi ngày</h3>
+                <p class="text-secondary mb-2">Mục <b>Giáo dục</b> có video bài tập theo độ tuổi. Mở khóa toàn bộ bằng
+                  gói thành viên.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4"
+                  data-bs-dismiss="modal">Bắt đầu dùng app</button>
+              </div>
+            </div>
+            <div class="carousel-indicators mb-0"><button type="button" data-bs-target="#tutCarousel"
+                data-bs-slide-to="0" class="bg-success active" aria-label="Bước 1"></button><button type="button"
+                data-bs-target="#tutCarousel" data-bs-slide-to="1" class="bg-success"
+                aria-label="Bước 2"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="2"
+                class="bg-success" aria-label="Bước 3"></button><button type="button" data-bs-target="#tutCarousel"
+                data-bs-slide-to="3" class="bg-success" aria-label="Bước 4"></button><button type="button"
+                data-bs-target="#tutCarousel" data-bs-slide-to="4" class="bg-success" aria-label="Bước 5"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>
