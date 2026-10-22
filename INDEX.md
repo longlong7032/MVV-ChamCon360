@@ -54,6 +54,8 @@ Game lật thẻ là bài **Trí nhớ** của IQ: làm xong câu hỏi (màn 17
 | 42 | 42_gioi-thieu.html | Mới | Nền tảng, tầm nhìn, sứ mệnh |
 | 43 | 43_goc-chuyen-gia.html | Mới | Hội đồng cố vấn và tư vấn |
 | 44 | 44_gioi-han-thiet-bi.html | Mới | Free 1 thiết bị, VIP 5 thiết bị |
+| 45 | 45_chon-be.html | Mới | Chọn hồ sơ của bé: ảnh, tên, tuổi, ô Mẹ bầu, nút Thêm bé |
+| 46 | 46_them-khoanh-khac.html | Mới | Thêm khoảnh khắc: chọn cột mốc, ngày, ảnh, ghi chú |
 
 ## Cần khách xác nhận (đang dùng số liệu hoặc nội dung minh họa)
 - Mức thưởng "xxx đ" mỗi lượt đăng ký và "y%" hoa hồng (màn 22).
