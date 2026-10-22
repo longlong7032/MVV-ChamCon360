@@ -6,6 +6,7 @@
 <title>Cài đặt nhắc nhở · Chăm con 360</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -20,7 +21,7 @@
   --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
   --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
   --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
-  --bs-link-color:#198754;--bs-link-color-rgb:25,135,84;--bs-link-hover-color:#146c43;--bs-link-hover-color-rgb:20,108,67;
+  --bs-link-color:#1f8a70;--bs-link-color-rgb:31,138,112;--bs-link-hover-color:#1a7561;--bs-link-hover-color-rgb:26,117,97;
 }
 .shadow,.shadow-sm{box-shadow:none!important}
 
@@ -47,7 +48,7 @@ textarea.form-control{min-height:7rem}
 
 /* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
 .form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
-.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(25,135,84,.25)}
+.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(31,138,112,.25)}
 
 /* Card outlined bo 12 */
 .card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
@@ -78,11 +79,56 @@ summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer
 .modal{--bs-modal-border-radius:1.75rem}
 .offcanvas{--bs-offcanvas-border-radius:1.75rem}
 .offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
+/* Mobile/tablet: không có hiệu ứng hover */
+.btn:hover:not(.active):not(:active){color:var(--bs-btn-color);background-color:var(--bs-btn-bg);border-color:var(--bs-btn-border-color)}
+.list-group-item-action:hover:not(:active){color:var(--bs-list-group-action-color);background-color:var(--bs-list-group-bg)}
+.nav-link:hover:not(.active){color:var(--bs-nav-link-color)}
+/* Bảng màu thương hiệu (theo logo Chăm con 360): xanh ngọc chủ đạo + 3 chấm Thân·Tâm·Trí */
+:root{--bs-success:#1f8a70;--bs-success-rgb:31,138,112;--bs-success-bg-subtle:#e1efeb;--bs-success-border-subtle:#b9d9cf;--bs-success-text-emphasis:#134f40;
+  --cc-teal:#1f8a70;--cc-coral:#ff5f4f;--cc-orange:#ffa11a;--cc-blue:#4165e0}
+.btn-success{--bs-btn-bg:#1f8a70;--bs-btn-border-color:#1f8a70;--bs-btn-hover-bg:#1c7c65;--bs-btn-hover-border-color:#1c7c65;--bs-btn-active-bg:#176f59;--bs-btn-active-border-color:#176f59;--bs-btn-disabled-bg:#1f8a70;--bs-btn-disabled-border-color:#1f8a70}
+.btn-outline-success{--bs-btn-color:#1f8a70;--bs-btn-border-color:#1f8a70;--bs-btn-hover-bg:#1f8a70;--bs-btn-hover-border-color:#1f8a70;--bs-btn-active-bg:#1f8a70;--bs-btn-active-border-color:#1f8a70}
+.text-bg-success{background-color:#1f8a70!important}
+/* Nhận diện nhẹ: font tiêu đề bo tròn, header có hoạ tiết, nền ngả xanh, nút có chiều sâu */
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.display-1,.display-2,.display-3,.display-4,.display-5,.display-6{font-family:Nunito,Inter,system-ui,sans-serif;letter-spacing:-.01em}
+header.bg-success{background-color:#1f8a70!important;background-repeat:no-repeat;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.75) 0 2px,transparent 2px 40px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.4) 0 1.5px,transparent 1.5px 8px),
+    radial-gradient(circle at 92% -30%,rgba(255,255,255,.16) 0,rgba(255,255,255,.16) 38px,transparent 39px),
+    radial-gradient(circle at 78% 130%,rgba(245,194,66,.30) 0,rgba(245,194,66,.30) 26px,transparent 27px),
+    linear-gradient(135deg,#2a9a80,#176f59);
+  background-size:100% 11px,100% 6px,auto,auto,auto;
+  background-position:0 100%,0 100%,0 0,0 0,0 0}
+body.bg-light{background-color:#e9f3f1!important;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27 viewBox=%270 0 200 200%27%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Cellipse cx=%2734%27 cy=%2744%27 rx=%279%27 ry=%2712%27 transform=%27rotate%28-15 34 44%29%27/%3E%3Ccircle cx=%2722%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2730%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2738%27 cy=%2724%27 r=%273.2%27/%3E%3Ccircle cx=%2745%27 cy=%2728%27 r=%273.2%27/%3E%3Ccircle cx=%2749%27 cy=%2735%27 r=%272.6%27/%3E%3Cellipse cx=%27148%27 cy=%2740%27 rx=%2713%27 ry=%2716%27/%3E%3Cpath d=%27M148 56l-3 5h6z%27/%3E%3C/g%3E%3Cpath d=%27M148 61c-2 10 6 14 2 26%27 fill=%27none%27 stroke=%27%231f8a70%27 stroke-opacity=%27.10%27 stroke-width=%271.6%27 stroke-linecap=%27round%27/%3E%3Cg fill=%27%23f5c242%27 fill-opacity=%27.28%27%3E%3Cpath d=%27M100 112l4.5 9.5 10.5 1.3-7.7 7.2 2 10.3-9.3-5.2-9.3 5.2 2-10.3-7.7-7.2 10.5-1.3z%27/%3E%3Crect x=%2728%27 y=%27128%27 width=%2726%27 height=%2726%27 rx=%276%27 transform=%27rotate%28-8 41 141%29%27/%3E%3Cpath d=%27M154 128c-7-10-21 0-11 11l11 11 11-11c10-11-4-21-11-11z%27/%3E%3C/g%3E%3Cg fill=%27%231f8a70%27 fill-opacity=%27.13%27%3E%3Ccircle cx=%27170%27 cy=%2796%27 r=%275%27/%3E%3Ccircle cx=%2770%27 cy=%27182%27 r=%274%27/%3E%3Ccircle cx=%27118%27 cy=%2724%27 r=%273%27/%3E%3C/g%3E%3C/svg%3E");background-size:200px 200px}
+.card{border:2px solid rgba(31,138,112,.22)!important;box-shadow:0 4px 0 rgba(31,138,112,.20)!important;border-radius:1.25rem!important}
+.card.mb-2,.list-group.mb-2{margin-bottom:.875rem!important}
+.card.mt-2.bg-warning-subtle,.card.mt-3{margin-top:1rem!important}
+.list-group.rounded-4{border:2px solid rgba(31,138,112,.22);box-shadow:0 4px 0 rgba(31,138,112,.20)}
+.card.bg-warning-subtle{border-color:rgba(255,161,26,.5)!important;box-shadow:0 4px 0 rgba(255,161,26,.32)!important}
+.btn-success{background-image:linear-gradient(180deg,#2aa085,#1f8a70);box-shadow:0 4px 0 #134f40}
+.btn-warning{box-shadow:0 4px 0 #b08000}
+.btn-outline-success{box-shadow:0 3px 0 rgba(31,138,112,.35)}
+.btn{transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:none!important}
+.progress-bar{border-radius:50rem}
+
+/* Dấu ấn thương hiệu: 3 chấm xanh dương · san hô · cam của logo (Thân · Tâm · Trí) ở góc thanh tiêu đề */
+header.bg-success::before{content:"";position:absolute;z-index:-1;right:122px;top:5px;width:7px;height:7px;border-radius:50%;
+  background:var(--cc-coral);box-shadow:-11px 0 0 var(--cc-blue),11px 0 0 var(--cc-orange);opacity:.95;pointer-events:none}
+
+/* Ô chọn / ô nhập cùng ngôn ngữ với thẻ: viền xanh dày, mép đáy, mũi tên xanh thương hiệu */
+.form-select,.form-control{border:2px solid rgba(31,138,112,.3);border-radius:1rem;box-shadow:0 3px 0 rgba(31,138,112,.18);background-color:#fff}
+.form-select{font-weight:600;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231f8a70' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' d='m3 6 5 5 5-5'/%3E%3C/svg%3E");background-size:16px;background-position:right 1rem center}
+.form-floating>label{color:#1f8a70;font-weight:500}
+.form-select:focus,.form-control:focus{border-color:#1f8a70;box-shadow:0 3px 0 rgba(31,138,112,.3),0 0 0 .2rem rgba(31,138,112,.15)}
+.input-group-text{border:2px solid rgba(31,138,112,.3);background:#eef5f2;color:#1f8a70;font-weight:600;border-radius:0 1rem 1rem 0;box-shadow:0 3px 0 rgba(31,138,112,.18)}
+.input-group>.form-control:not(:last-child){border-radius:1rem 0 0 1rem;border-right:0}
 </style>
 </head>
 <body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
 <div class="container-fluid mx-auto d-flex flex-column min-vh-100 px-0 shadow-sm" style="max-width:820px">
-  <header class="bg-success text-white rounded-bottom-4 shadow-sm px-2 py-2 mb-2 d-flex align-items-center gap-2 sticky-top">
+  <header class="bg-success text-white rounded-bottom-4 shadow-sm px-3 py-2 mb-2 d-flex align-items-center gap-2 sticky-top">
     <a href="38_tai-khoan-menu.html" class="btn text-nowrap flex-shrink-0 btn-outline-light rounded-circle fw-bold px-2 border-0 fs-4 lh-1" aria-label="Quay lại">‹</a>
     <h1 class="h5 fw-bold mb-0 flex-grow-1 text-truncate">Nhắc nhở cập nhật</h1>
     <button type="button" class="btn text-nowrap flex-shrink-0 btn-light btn-sm rounded-circle fw-bold" data-bs-toggle="modal" data-bs-target="#tutorial" aria-label="Hướng dẫn sử dụng">?</button>

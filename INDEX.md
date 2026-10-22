@@ -1,6 +1,6 @@
 # Chăm con 360 – Phase 2: danh sách màn hình (HTML + Bootstrap 5)
 
-Các file đánh số **theo thứ tự luồng dùng app**: đăng nhập → tạo hồ sơ → hướng dẫn → Trang chủ → cập nhật tuần → Công cụ → từng công cụ → tài khoản. Mỗi file là một màn độc lập, responsive (mobile 390px, tablet 820px). Không có tính năng AI.
+Các file đánh số **theo thứ tự luồng dùng app**: đăng nhập → tạo hồ sơ → **dự đoán chiều cao (25)** → Trang chủ (hướng dẫn 03 vẫn mở được từ Tài khoản) → cập nhật tuần → Công cụ → từng công cụ → tài khoản. Mỗi file là một màn độc lập, responsive (mobile 390px, tablet 820px). Không có tính năng AI.
 Hậu tố `a` là **trạng thái trống** (chưa có dữ liệu), `b` là **trạng thái có dữ liệu**.
 Game lật thẻ là bài **Trí nhớ** của IQ: làm xong câu hỏi (màn 17) thì chơi lật thẻ (màn 36) rồi ra kết quả IQ (màn 18). Game vẫn còn trong Công cụ (Tiện ích) để chơi riêng.
 
@@ -21,7 +21,6 @@ Game lật thẻ là bài **Trí nhớ** của IQ: làm xong câu hỏi (màn 17
 | 13 | 13_pq-lich-su.html | Hiệu chỉnh | So cân nặng với chuẩn WHO; BMI trẻ dưới 5 tuổi |
 | 14a | 14a_iq-tong-quan_trong.html | Hiệu chỉnh | IQ tổng quan, TRẠNG THÁI TRỐNG: chưa đánh giá, nút Bắt đầu đánh giá IQ |
 | 14b | 14b_iq-tong-quan_co-du-lieu.html | Hiệu chỉnh | IQ tổng quan SAU KHI HOÀN THÀNH: điểm IQ, kết quả 4 loại (độ tuổi, người đánh giá, ngày), danh hiệu |
-| 16 | 16_iq-chon-nguoi-danh-gia.html | Mới | Luồng IQ: chọn người đánh giá (bé tự làm, bố mẹ, người thân/giáo viên) |
 | 17 | 17_iq-eq-aq-lam-bai.html | Mới | Làm bài trắc nghiệm dùng chung IQ/EQ/AQ: mỗi câu có loại câu hỏi |
 | 18 | 18_iq-ket-qua.html | Hiệu chỉnh | Kết quả từng loại IQ, bảng danh hiệu |
 | 19 | 19_eq-tong-quan.html | Mới | EQ chia 5 năng lực, kết quả từng loại, nút bắt đầu đánh giá |
@@ -56,6 +55,9 @@ Game lật thẻ là bài **Trí nhớ** của IQ: làm xong câu hỏi (màn 17
 | 44 | 44_gioi-han-thiet-bi.html | Mới | Free 1 thiết bị, VIP 5 thiết bị |
 | 45 | 45_chon-be.html | Mới | Chọn hồ sơ của bé: ảnh, tên, tuổi, ô Mẹ bầu, nút Thêm bé |
 | 46 | 46_them-khoanh-khac.html | Mới | Thêm khoảnh khắc: chọn cột mốc, ngày, ảnh, ghi chú |
+| 47 | 47_mat-ket-noi.html | Mới | Trạng thái lỗi: mất kết nối máy chủ, thử lại, xem dữ liệu đã lưu |
+| 48 | 48_dang-tai.html | Mới | Trạng thái đang tải (skeleton trang chủ) |
+| 49 | 49_loi-nhap-lieu.html | Mới | Trạng thái lỗi nhập liệu: thông báo lỗi từng ô, tổng số chỗ cần sửa |
 
 ## Cần khách xác nhận (đang dùng số liệu hoặc nội dung minh họa)
 - Mức thưởng "xxx đ" mỗi lượt đăng ký và "y%" hoa hồng (màn 22).
