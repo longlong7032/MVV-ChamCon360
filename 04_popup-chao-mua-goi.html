@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Popup mua gói · Chăm con 360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style id="flutter-m3">
+/* Chỉ chỉnh vài biến Bootstrap; phần còn lại dùng class BS5 */
+body{--bs-body-font-size:.875rem}
+.btn{--bs-btn-border-radius:2rem;--bs-btn-padding-y:.5rem;min-height:2.5rem;display:inline-flex;align-items:center;justify-content:center}
+.btn-sm{min-height:2.25rem}.btn-lg{min-height:3rem}
+.btn.rounded-circle{width:2.5rem;padding:0}.btn-sm.rounded-circle{width:2.25rem}
+.shadow,.shadow-sm{box-shadow:none!important}
+.card{border:1px solid var(--bs-border-color)!important}.card.bg-success-subtle{border-color:transparent!important}
+</style>
+</head>
+<body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
+<div class="container-fluid mx-auto d-flex flex-column min-vh-100 px-0 shadow-sm" style="max-width:820px">
+
+  <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
+
+    <img src="https://placehold.co/800x300/198754/ffffff?font=noto-sans&amp;text=Ch%C4%83m+con+360%0APh%C3%A1t+tri%E1%BB%83n+to%C3%A0n+di%E1%BB%87n+cho+con" width="800" height="300" alt="Chăm con 360. Phát triển toàn diện cho con" class="img-fluid w-100 object-fit-cover rounded-4 shadow-sm mb-2" style="max-height:240px">
+    <div class="offcanvas offcanvas-bottom show rounded-top-4 h-auto" tabindex="-1" aria-labelledby="pop-title" style="visibility:visible">
+      <div class="ratio ratio-16x9 rounded-top-4 overflow-hidden"><div class="bg-warning bg-gradient d-flex align-items-center justify-content-center display-1">🎁</div></div>
+      <div class="offcanvas-header pb-0"><h2 id="pop-title" class="offcanvas-title h5 fw-bold">Mở khóa tiềm năng phát triển của con</h2><button type="button" class="btn-close" aria-label="Đóng"></button></div>
+      <div class="offcanvas-body">
+        <div class="d-flex gap-2 py-1"><span class="badge rounded-circle text-bg-success align-self-center">✓</span>Xem toàn bộ video giáo dục</div><div class="d-flex gap-2 py-1"><span class="badge rounded-circle text-bg-success align-self-center">✓</span>Phác đồ chiều cao theo mục tiêu</div><div class="d-flex gap-2 py-1"><span class="badge rounded-circle text-bg-success align-self-center">✓</span>Dùng trên 5 thiết bị cùng vợ hoặc chồng</div><div class="d-flex gap-2 py-1"><span class="badge rounded-circle text-bg-success align-self-center">✓</span>Không quảng cáo</div>
+        <div class="list-group my-2">
+          <label class="list-group-item d-flex align-items-center gap-3 border-success border-2 bg-success-subtle position-relative"><input class="form-check-input mt-0" type="radio" name="plan" checked><span class="flex-grow-1"><b>Gói VIP 1 năm</b> <span class="badge text-bg-success">Khuyến nghị</span><br><small class="text-secondary">Giá tiết kiệm nhất</small></span><b>x.xxx.000 đ</b></label>
+          <label class="list-group-item d-flex align-items-center gap-3"><input class="form-check-input mt-0" type="radio" name="plan"><span class="flex-grow-1"><b>Gói 6 tháng</b><br><small class="text-secondary">Thanh toán một lần</small></span><b>680.000 đ</b></label>
+        </div>
+        <a href="38_tai-khoan-menu.html" class="btn text-nowrap flex-shrink-0 btn-success rounded-pill fw-semibold py-2 w-100">Đăng ký ngay</a>
+        <div class="text-center mt-2"><a href="05a_trang-chu_chua-cap-nhat-tuan.html" class="btn text-nowrap flex-shrink-0 btn-link text-secondary">Để sau</a></div>
+      </div>
+    </div>
+    <div class="offcanvas-backdrop fade show"></div>
+  </main>
+</div>
+<div class="modal fade" id="tutorial" tabindex="-1" aria-labelledby="tut-title" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0">
+  <div class="modal-header border-0 pb-0"><h2 class="modal-title h6 text-secondary" id="tut-title">Hướng dẫn sử dụng</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div>
+  <div class="modal-body pt-0"><div id="tutCarousel" class="carousel slide" data-bs-interval="false"><div class="carousel-inner pt-1 pb-4"><div class="carousel-item active text-center px-2"><div class="display-1">👋</div><h3 class="h5 fw-bold mt-1">Chào mừng bố mẹ</h3><p class="text-secondary mb-2">Chăm con 360 giúp bố mẹ theo dõi và nuôi con phát triển toàn diện: thể chất, trí tuệ, học lực, cảm xúc, vượt khó.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">👶</div><h3 class="h5 fw-bold mt-1">Bước 1: Tạo hồ sơ cho con</h3><p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tạo hồ sơ cho con</b>, nhập tên, giới tính và ngày sinh. Mỗi con là một hồ sơ riêng.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">✅</div><h3 class="h5 fw-bold mt-1">Bước 2: Làm đánh giá</h3><p class="text-secondary mb-2">Chọn Thể chất, Trí tuệ, Học bạ, Cảm xúc hoặc Vượt khó. Điểm của con hiện ngay ở màn <b>Công cụ</b>.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">📏</div><h3 class="h5 fw-bold mt-1">Dự đoán chiều cao</h3><p class="text-secondary mb-2">Vào <b>Công cụ</b> → <b>Tiện ích</b> → <b>Dự đoán chiều cao</b>. Nhập chiều cao hiện tại và chiều cao cách đây 12 tháng.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-target="#tutCarousel" data-bs-slide="next">Tiếp ›</button></div><div class="carousel-item text-center px-2"><div class="display-1">🎬</div><h3 class="h5 fw-bold mt-1">Học cùng con mỗi ngày</h3><p class="text-secondary mb-2">Mục <b>Giáo dục</b> có video bài tập theo độ tuổi. Mở khóa toàn bộ bằng gói thành viên.</p><button class="btn text-nowrap flex-shrink-0 btn-success rounded-pill px-4" data-bs-dismiss="modal">Bắt đầu dùng app</button></div></div><div class="carousel-indicators mb-0"><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="0" class="bg-success active" aria-label="Bước 1"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="1" class="bg-success" aria-label="Bước 2"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="2" class="bg-success" aria-label="Bước 3"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="3" class="bg-success" aria-label="Bước 4"></button><button type="button" data-bs-target="#tutCarousel" data-bs-slide-to="4" class="bg-success" aria-label="Bước 5"></button></div></div></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

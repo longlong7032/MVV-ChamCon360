@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+</head>
+
+<body
+  class="m-0 bg-[var(--figma-color-bg,#fff)] p-4 font-sans text-xs leading-snug text-[var(--figma-color-text,#222)]">
+  <h1 class="mb-1 text-sm font-bold">HTML → Figma</h1>
+  <p class="mb-3 text-[var(--figma-color-text-secondary,#666)]">Dán mã HTML hoặc chọn file .html. Plugin render trang
+    rồi dựng lại thành frame, text, ảnh, icon trong Figma.</p>
+
+  <label class="mb-1 mt-3 block font-semibold">Chọn file .html (chọn được nhiều file)</label>
+  <div id="drop"
+    class="mt-1 cursor-pointer rounded-lg border-[1.5px] border-dashed border-[var(--figma-color-border,#bbb)] p-3.5 text-center text-[var(--figma-color-text-secondary,#666)]">
+    Bấm để chọn hoặc kéo thả file .html vào đây</div>
+  <input type="file" id="file" accept=".html,.htm,text/html" multiple hidden>
+  <div id="files" class="mt-1.5 break-all text-[var(--figma-color-text-secondary,#666)]"></div>
+
+  <label for="code" class="mb-1 mt-3 block font-semibold">Hoặc dán mã HTML</label>
+  <textarea id="code" placeholder="<!DOCTYPE html>..."
+    class="w-full rounded-md border border-[var(--figma-color-border,#ccc)] bg-[var(--figma-color-bg-secondary,#f6f6f6)] p-2 font-mono text-xs text-inherit h-36 resize-y"></textarea>
+
+  <label for="width" class="mb-1 mt-3 block font-semibold">Kích thước khung (rộng × cao)</label>
+  <select id="width"
+    class="w-full rounded-md border border-[var(--figma-color-border,#ccc)] bg-[var(--figma-color-bg-secondary,#f6f6f6)] p-2 font-mono text-xs text-inherit">
+    <optgroup label="Mobile">
+      <option value="393x852" selected>393 × 852 – iPhone 14/15/16 (chuẩn)</option>
+      <option value="430x932">430 × 932 – iPhone Pro Max / Plus</option>
+      <option value="375x812">375 × 812 – iPhone X/11 Pro/13 Mini</option>
+      <option value="360x800">360 × 800 – Android chuẩn 360</option>
+      <option value="412x915">412 × 915 – Android chuẩn 412</option>
+    </optgroup>
+    <optgroup label="Tablet dọc">
+      <option value="768x1024">768 × 1024 – iPad Mini / Tablet 8-10"</option>
+      <option value="834x1194">834 × 1194 – iPad Air / Pro 11"</option>
+      <option value="800x1280">800 × 1280 – Android Tablet</option>
+      <option value="1024x1366">1024 × 1366 – iPad Pro 12.9"</option>
+    </optgroup>
+    <optgroup label="Tablet ngang">
+      <option value="1024x768">1024 × 768 – iPad Mini / Tablet 8-10"</option>
+      <option value="1194x834">1194 × 834 – iPad Air / Pro 11"</option>
+      <option value="1280x800">1280 × 800 – Android Tablet</option>
+      <option value="1366x1024">1366 × 1024 – iPad Pro 12.9"</option>
+    </optgroup>
+  </select>
+
+  <label class="mt-3 flex cursor-pointer items-center gap-2 font-normal">
+    <input type="checkbox" id="auto" checked>
+    Dựng bằng Auto Layout (co giãn theo nội dung và khung)
+  </label>
+
+  <div class="mt-3.5 flex gap-2">
+    <button id="close"
+      class="flex-1 cursor-pointer rounded-md border border-[var(--figma-color-border,#ccc)] bg-transparent px-3 py-2 font-semibold text-inherit">Đóng</button>
+    <button id="go"
+      class="flex-1 cursor-pointer rounded-md border border-transparent bg-[var(--figma-color-bg-brand,#0d99ff)] px-3 py-2 font-semibold text-white disabled:cursor-default disabled:opacity-50">Nhập
+      vào Figma</button>
+  </div>
+  <div id="log"
+    class="mt-3 h-28 overflow-auto whitespace-pre-wrap rounded-md bg-[var(--figma-color-bg-secondary,#f6f6f6)] p-2 font-mono text-[11px] leading-normal">
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let pickedFiles = [];
+    const ERR = 'text-red-500';
+    const OVER = ['border-[var(--figma-color-bg-brand,#0d99ff)]', 'text-[var(--figma-color-text-brand,#0d99ff)]'];
+
+    // ---------- UI ----------
+    function log(msg, cls) {
+      const d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.textContent = msg;
+      $('log').appendChild(d);
+      $('log').scrollTop = 1e9;
+    }
+    function setFiles(list) {
+      pickedFiles = Array.from(list).filter((f) => /\.html?$/i.test(f.name));
+      $('files').textContent = pickedFiles.length ? pickedFiles.map((f) => f.name).join(', ') : '';
+    }
+    $('drop').onclick = () => $('file').click();
+    $('file').onchange = (e) => setFiles(e.target.files);
+    $('drop').ondragover = (e) => { e.preventDefault(); $('drop').classList.add(...OVER); };
+    $('drop').ondragleave = () => $('drop').classList.remove(...OVER);
+    $('drop').ondrop = (e) => { e.preventDefault(); $('drop').classList.remove(...OVER); setFiles(e.dataTransfer.files); };
+    $('close').onclick = () => parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+
+    const pending = new Map();
+    let seq = 0;
+    onmessage = (e) => {
+      const m = e.data.pluginMessage;
+      if (!m) return;
+      const p = pending.get(m.id);
+      if (!p) return;
+      pending.delete(m.id);
+      if (m.type === 'imported') p.resolve(); else p.reject(new Error(m.message));
+    };
+    function sendToFigma(name, tree) {
+      const id = ++seq;
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        parent.postMessage({ pluginMessage: { type: 'import', id, name, tree } }, '*');
+      });
+    }
+
+    $('go').onclick = async () => {
+      const jobs = [];
+      for (const f of pickedFiles) jobs.push({ name: f.name.replace(/\.html?$/i, ''), html: await f.text() });
+      if (!jobs.length && $('code').value.trim()) jobs.push({ name: 'HTML', html: $('code').value });
+      if (!jobs.length) { log('Chưa có HTML. Hãy chọn file hoặc dán mã.', ERR); return; }
+
+      $('go').disabled = true;
+      const [width, height] = $('width').value.split('x').map(Number);
+      let ok = 0;
+      for (const job of jobs) {
+        try {
+          log('Đang xử lý: ' + job.name + ' ...');
+          const tree = await htmlToTree(job.html, width, height);
+          const title = tree.title || job.name;
+          await sendToFigma(job.name === 'HTML' ? title : job.name, tree);
+          log('✔ ' + job.name + ' (' + Math.round(tree.w) + '×' + Math.round(tree.h) + ')');
+          ok++;
+        } catch (err) {
+          log('✘ ' + job.name + ': ' + err.message, ERR);
+        }
+      }
+      parent.postMessage({ pluginMessage: { type: 'finish' } }, '*');
+      log('Xong: ' + ok + '/' + jobs.length + ' trang.');
+      $('go').disabled = false;
+    };
+
+    // ---------- Render HTML trong iframe ẩn ----------
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    async function htmlToTree(html, width, vh) {
+      const frame = document.createElement('iframe');
+      frame.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+      frame.className = 'pointer-events-none fixed -left-[100000px] top-0 border-0 opacity-0';
+      frame.style.width = width + 'px';
+      frame.style.height = vh + 'px';
+      document.body.appendChild(frame);
+      try {
+        await new Promise((resolve) => {
+          const t = setTimeout(resolve, 20000);
+          frame.onload = () => { clearTimeout(t); resolve(); };
+          frame.srcdoc = html;
+        });
+        const doc = frame.contentDocument;
+        if (!doc || !doc.body) throw new Error('Không render được HTML');
+        try { await Promise.race([doc.fonts.ready, sleep(8000)]); } catch (e) { }
+        const imgs = Array.from(doc.images).filter((i) => !i.complete);
+        await Promise.race([
+          Promise.all(imgs.map((i) => new Promise((r) => { i.onload = i.onerror = r; }))),
+          sleep(6000),
+        ]);
+        await sleep(250);
+        const h1 = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, vh);
+        frame.style.height = h1 + 'px';
+        await sleep(150);
+        const H = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, vh);
+        frame.style.height = H + 'px';
+        await sleep(100);
+        const tree = await extract(frame, width, H);
+        if ($('auto').checked) layoutify(tree);
+        return tree;
+      } finally {
+        frame.remove();
+      }
+    }
+
+    // ---------- Trích xuất cây node ----------
+    async function extract(frame, W, H) {
+      const win = frame.contentWindow;
+      const doc = frame.contentDocument;
+      const SKIP = new Set(['script', 'style', 'link', 'meta', 'head', 'title', 'noscript', 'template', 'br', 'wbr', 'source', 'track', 'iframe', 'object', 'embed', 'defs']);
+      const imgCache = new Map();
+      const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+
+      // --- màu ---
+      function pc(str) {
+        if (!str || str === 'transparent') return { r: 0, g: 0, b: 0, a: 0 };
+        const m = /^rgba?\(([^)]+)\)$/.exec(str.trim());
+        if (m) {
+          const p = m[1].split(/[\s,\/]+/).filter(Boolean).map((v) => (v.endsWith('%') ? parseFloat(v) / 100 : parseFloat(v)));
+          return { r: p[0] / 255, g: p[1] / 255, b: p[2] / 255, a: p.length > 3 ? p[3] : 1 };
+        }
+        probe.clearRect(0, 0, 1, 1);
+        probe.fillStyle = '#000';
+        probe.fillStyle = str;
+        probe.fillRect(0, 0, 1, 1);
+        const d = probe.getImageData(0, 0, 1, 1).data;
+        return { r: d[0] / 255, g: d[1] / 255, b: d[2] / 255, a: d[3] / 255 };
+      }
+      const solid = (c) => ({ type: 'solid', r: c.r, g: c.g, b: c.b, a: c.a });
+      const px = (v) => parseFloat(v) || 0;
+
+      function splitTop(s, sep) {
+        const out = [];
+        let depth = 0, cur = '';
+        for (const ch of s) {
+          if (ch === '(') depth++;
+          if (ch === ')') depth--;
+          if (ch === sep && depth === 0) { out.push(cur.trim()); cur = ''; } else cur += ch;
+        }
+        if (cur.trim()) out.push(cur.trim());
+        return out;
+      }
+
+      // --- gradient ---
+      function inv(m) {
+        const [[a, c, e], [b, d, f]] = m;
+        const det = a * d - b * c;
+        if (!det) return [[1, 0, 0], [0, 1, 0]];
+        return [
+          [d / det, -c / det, (c * f - d * e) / det],
+          [-b / det, a / det, (b * e - a * f) / det],
+        ];
+      }
+      function linearGradient(str, w, h) {
+        const inner = str.slice(str.indexOf('(') + 1, str.lastIndexOf(')'));
+        const parts = splitTop(inner, ',');
+        let deg = 180;
+        const first = parts[0];
+        if (/^to\s/.test(first)) {
+          const sx = /right/.test(first) ? 1 : /left/.test(first) ? -1 : 0;
+          const sy = /bottom/.test(first) ? 1 : /top/.test(first) ? -1 : 0;
+          if (sx && sy) deg = (Math.atan2(sx * h, -sy * w) * 180) / Math.PI;
+          else if (sx) deg = sx > 0 ? 90 : 270;
+          else deg = sy > 0 ? 180 : 0;
+          parts.shift();
+        } else if (/^-?[\d.]+(deg|rad|turn|grad)$/.test(first)) {
+          const v = parseFloat(first);
+          deg = first.endsWith('rad') ? (v * 180) / Math.PI : first.endsWith('turn') ? v * 360 : first.endsWith('grad') ? v * 0.9 : v;
+          parts.shift();
+        }
+        const th = (deg * Math.PI) / 180;
+        const dx = Math.sin(th), dy = -Math.cos(th);
+        const len = Math.abs(w * dx) + Math.abs(h * dy) || 1;
+        const P0 = [w / 2 - (dx * len) / 2, h / 2 - (dy * len) / 2];
+        const U = [dx * len, dy * len];
+        const V = [-U[1], U[0]];
+        const M = [
+          [U[0] / w, V[0] / w, (P0[0] - V[0] * 0.5) / w],
+          [U[1] / h, V[1] / h, (P0[1] - V[1] * 0.5) / h],
+        ];
+        const stops = parts.map((p) => {
+          const m = /^(rgba?\([^)]*\)|#[0-9a-f]+|[a-z]+)\s*(.*)$/i.exec(p);
+          if (!m) return null;
+          const col = pc(m[1]);
+          let pos = null;
+          const pm = /(-?[\d.]+)(%|px)/.exec(m[2]);
+          if (pm) pos = pm[2] === '%' ? parseFloat(pm[1]) / 100 : parseFloat(pm[1]) / len;
+          return { color: col, position: pos };
+        }).filter(Boolean);
+        if (stops.length < 2) return null;
+        if (stops[0].position == null) stops[0].position = 0;
+        if (stops[stops.length - 1].position == null) stops[stops.length - 1].position = 1;
+        for (let i = 1; i < stops.length - 1; i++) {
+          if (stops[i].position != null) continue;
+          let j = i;
+          while (stops[j].position == null) j++;
+          const a = stops[i - 1].position, b = stops[j].position;
+          for (let k = i; k < j; k++) stops[k].position = a + ((b - a) * (k - i + 1)) / (j - i + 1);
+        }
+        return {
+          type: 'linear',
+          transform: inv(M),
+          stops: stops.map((s) => ({ position: Math.min(1, Math.max(0, s.position)), color: s.color })),
+        };
+      }
+
+      // --- ảnh ---
+      async function loadImage(url) {
+        if (imgCache.has(url)) return imgCache.get(url);
+        let res = null;
+        try {
+          const blob = await (await fetch(url)).blob();
+          const bmp = await createImageBitmap(blob);
+          const k = Math.min(1, 2048 / Math.max(bmp.width, bmp.height));
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(bmp.width * k));
+          c.height = Math.max(1, Math.round(bmp.height * k));
+          c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+          const png = await new Promise((r) => c.toBlob(r, 'image/png'));
+          res = new Uint8Array(await png.arrayBuffer());
+        } catch (e) {
+          res = null;
+        }
+        imgCache.set(url, res);
+        return res;
+      }
+
+      // --- shadow ---
+      function parseShadows(str) {
+        if (!str || str === 'none') return [];
+        return splitTop(str, ',').map((s) => {
+          const cm = /(rgba?\([^)]*\))/.exec(s);
+          const color = pc(cm ? cm[1] : 'rgba(0,0,0,.25)');
+          const rest = s.replace(cm ? cm[1] : '', '');
+          const nums = (rest.match(/-?[\d.]+px|-?\b0\b/g) || []).map(parseFloat);
+          return { x: nums[0] || 0, y: nums[1] || 0, blur: nums[2] || 0, spread: nums[3] || 0, color, inset: /inset/.test(s) };
+        });
+      }
+
+      function radiusOf(cs, w, h) {
+        const f = (v) => {
+          const t = (v || '0').split(' ')[0];
+          return t.endsWith('%') ? (parseFloat(t) / 100) * Math.min(w, h) : parseFloat(t) || 0;
+        };
+        const r = [f(cs.borderTopLeftRadius), f(cs.borderTopRightRadius), f(cs.borderBottomRightRadius), f(cs.borderBottomLeftRadius)];
+        return r.some((v) => v > 0) ? r : null;
+      }
+
+      function borderOf(cs) {
+        const sides = ['Top', 'Right', 'Bottom', 'Left'].map((s) => ({
+          w: cs['border' + s + 'Style'] === 'none' || cs['border' + s + 'Style'] === 'hidden' ? 0 : px(cs['border' + s + 'Width']),
+          c: pc(cs['border' + s + 'Color']),
+          dashed: /dashed|dotted/.test(cs['border' + s + 'Style']),
+        }));
+        if (!sides.some((s) => s.w > 0 && s.c.a > 0)) return null;
+        const src = sides.find((s) => s.w > 0 && s.c.a > 0);
+        return {
+          top: sides[0].w, right: sides[1].w, bottom: sides[2].w, left: sides[3].w,
+          uniform: sides.every((s) => s.w === sides[0].w),
+          color: src.c,
+          dashed: src.dashed,
+        };
+      }
+
+      const nameOf = (el) => {
+        const tag = el.tagName.toLowerCase();
+        if (el.id) return tag + '#' + el.id;
+        const c = (typeof el.className === 'string' ? el.className : '').trim().split(/\s+/)[0];
+        return c ? tag + '.' + c : tag;
+      };
+
+      // --- text ---
+      const FONT_GENERIC = /^(system-ui|-apple-system|blinkmacsystemfont|sans-serif|serif|monospace|ui-sans-serif|ui-serif|ui-monospace|segoe ui|helvetica neue|helvetica|arial)$/i;
+      function fontOf(cs) {
+        const fams = cs.fontFamily.split(',').map((s) => s.trim().replace(/^["']|["']$/g, ''));
+        const fam = fams.find((f) => f && !FONT_GENERIC.test(f)) || 'Inter';
+        return fam;
+      }
+      function mkText(chars, rect, cs, color, multiline) {
+        const tt = cs.textTransform;
+        if (tt === 'uppercase') chars = chars.toUpperCase();
+        else if (tt === 'lowercase') chars = chars.toLowerCase();
+        else if (tt === 'capitalize') chars = chars.replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase());
+        const align = { center: 'CENTER', right: 'RIGHT', end: 'RIGHT' }[cs.textAlign] || 'LEFT';
+        const deco = /underline/.test(cs.textDecorationLine) ? 'UNDERLINE' : /line-through/.test(cs.textDecorationLine) ? 'STRIKETHROUGH' : 'NONE';
+        return {
+          t: 'text', chars,
+          x: rect.x, y: rect.y, w: multiline ? Math.ceil(rect.width) + 2 : rect.width, h: rect.height,
+          multiline,
+          fontFamily: fontOf(cs), fontSize: px(cs.fontSize),
+          weight: parseInt(cs.fontWeight, 10) || 400,
+          italic: cs.fontStyle === 'italic' || cs.fontStyle === 'oblique',
+          color,
+          lineHeight: cs.lineHeight === 'normal' ? null : px(cs.lineHeight),
+          letterSpacing: cs.letterSpacing === 'normal' ? 0 : px(cs.letterSpacing),
+          align, decoration: deco,
+        };
+      }
+
+      const range = doc.createRange();
+      function textFromNode(tn, pcs, out) {
+        const raw = tn.nodeValue;
+        const pre = pcs.whiteSpace.startsWith('pre');
+        let start, end, s;
+        if (pre) {
+          start = 0; end = raw.length; s = raw.replace(/\n+$/, '');
+        } else {
+          start = raw.length - raw.replace(/^\s+/, '').length;
+          end = raw.replace(/\s+$/, '').length;
+          s = raw.slice(start, end).replace(/\s+/g, ' ');
+        }
+        if (!s.trim() || end <= start) return;
+        range.setStart(tn, start);
+        range.setEnd(tn, end);
+        const rects = Array.from(range.getClientRects()).filter((r) => r.width > 0 && r.height > 0);
+        if (!rects.length) return;
+        const b = range.getBoundingClientRect();
+        const lines = new Set(rects.map((r) => Math.round(r.top))).size;
+        const color = pc(pcs.color);
+        const tnode = mkText(s, b, pcs, color, lines > 1);
+        tnode.lines = lines;
+        out.push(tnode);
+      }
+
+      // --- icon font / pseudo-element ---
+      async function rasterGlyph(text, pcs, rect) {
+        const size = px(pcs.fontSize) || 16;
+        const font = pcs.fontWeight + ' ' + size + 'px ' + pcs.fontFamily;
+        try { await doc.fonts.load(font, text); } catch (e) { }
+        const S = 4;
+        const c = doc.createElement('canvas');
+        const g = c.getContext('2d');
+        g.font = font;
+        const wText = Math.ceil(g.measureText(text).width);
+        const cw = Math.max(1, wText + 2), ch = Math.max(1, Math.ceil(size * 1.3));
+        c.width = cw * S; c.height = ch * S;
+        const g2 = c.getContext('2d');
+        g2.scale(S, S);
+        g2.font = font;
+        g2.fillStyle = pcs.color;
+        g2.textBaseline = 'middle';
+        g2.fillText(text, 1, ch / 2);
+        const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        return { bytes, w: cw, h: ch };
+      }
+
+      async function pseudo(el, which, cs, r, out) {
+        const pcs = win.getComputedStyle(el, which);
+        let content = pcs.content;
+        if (!content || content === 'none' || content === 'normal' || content[0] !== '"') return;
+        if (pcs.display === 'none' || pcs.visibility === 'hidden') return;
+        content = content.slice(1, -1).replace(/\\"/g, '"');
+        if (!content.trim()) return;
+        const isIcon = /[-]/.test(content) || /icon|awesome|glyph|symbols/i.test(pcs.fontFamily);
+        const lh = px(pcs.lineHeight) || px(pcs.fontSize) * 1.3;
+        const bl = px(cs.borderLeftWidth) + px(cs.paddingLeft);
+        const br = px(cs.borderRightWidth) + px(cs.paddingRight);
+        const emptyHost = !el.textContent.trim() && !el.children.length;
+        if (isIcon) {
+          const g = await rasterGlyph(content, pcs, r);
+          let x = which === '::before' ? r.x + bl : r.right - br - g.w;
+          if (emptyHost) x = r.x + (r.width - g.w) / 2;
+          out.push({
+            t: 'box', name: 'icon', x, y: r.y + r.height / 2 - g.h / 2, w: g.w, h: g.h,
+            fills: [{ type: 'image', bytes: g.bytes, mode: 'FIT' }], clip: false, children: [],
+          });
+          return;
+        }
+        const g2 = doc.createElement('canvas').getContext('2d');
+        g2.font = pcs.fontWeight + ' ' + pcs.fontSize + ' ' + pcs.fontFamily;
+        const w = g2.measureText(content).width;
+        const x = which === '::before' ? r.x + bl : r.right - br - w;
+        out.push(mkText(content, { x, y: r.y + r.height / 2 - lh / 2, width: w, height: lh }, pcs, pc(pcs.color), false));
+      }
+
+      // --- svg ---
+      function svgNode(el, cs, r) {
+        const clone = el.cloneNode(true);
+        const origs = el.querySelectorAll('*');
+        const clones = clone.querySelectorAll('*');
+        origs.forEach((o, i) => {
+          const ocs = win.getComputedStyle(o);
+          const c = clones[i];
+          if (ocs.fill && ocs.fill !== 'none' && !c.getAttribute('fill')) c.setAttribute('fill', ocs.fill);
+          if (ocs.stroke && ocs.stroke !== 'none' && !c.getAttribute('stroke')) {
+            c.setAttribute('stroke', ocs.stroke);
+            c.setAttribute('stroke-width', ocs.strokeWidth);
+          }
+        });
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        if (!clone.getAttribute('viewBox')) clone.setAttribute('viewBox', '0 0 ' + r.width + ' ' + r.height);
+        clone.setAttribute('width', r.width);
+        clone.setAttribute('height', r.height);
+        let s = new XMLSerializer().serializeToString(clone).replace(/currentColor/g, cs.color);
+        return { t: 'svg', name: nameOf(el), x: r.x, y: r.y, w: r.width, h: r.height, svg: s, opacity: parseFloat(cs.opacity) };
+      }
+
+      // --- box ---
+      async function boxNode(el, cs, r, tag, op) {
+        const fills = [];
+        const bg = pc(cs.backgroundColor);
+        if (bg.a > 0) fills.push(solid(bg));
+
+        const layers = [];
+        if (cs.backgroundImage && cs.backgroundImage !== 'none') {
+          const sizes = splitTop(cs.backgroundSize || '', ',');
+          const imgs = splitTop(cs.backgroundImage, ',');
+          for (let i = 0; i < imgs.length; i++) {
+            const v = imgs[i];
+            if (v.startsWith('linear-gradient')) {
+              const g = linearGradient(v, r.width, r.height);
+              if (g) layers.push(g);
+            } else if (v.startsWith('url(')) {
+              const u = /url\((?:"|')?(.*?)(?:"|')?\)/.exec(v);
+              if (u) {
+                const bytes = await loadImage(u[1]);
+                if (bytes) layers.push({ type: 'image', bytes, mode: (sizes[i] || sizes[0]) === 'contain' ? 'FIT' : 'FILL' });
+              }
+            }
+          }
+        }
+        layers.reverse().forEach((l) => fills.push(l));
+
+        if (tag === 'img') {
+          const bytes = el.currentSrc ? await loadImage(el.currentSrc) : null;
+          if (bytes) fills.push({ type: 'image', bytes, mode: cs.objectFit === 'contain' ? 'FIT' : 'FILL' });
+          else fills.push(solid({ r: 0.91, g: 0.93, b: 0.94, a: 1 }));
+        } else if (tag === 'video' || tag === 'canvas') {
+          fills.push(solid({ r: 0.85, g: 0.87, b: 0.89, a: 1 }));
+        }
+
+        const border = borderOf(cs);
+        const shadows = parseShadows(cs.boxShadow);
+        const clip = cs.overflowX !== 'visible' || cs.overflowY !== 'visible';
+        if (r.width <= 0 || r.height <= 0) return null;
+        const par = el.parentElement ? win.getComputedStyle(el.parentElement) : null;
+        const parFlex = !!par && /flex/.test(par.display);
+        const cls = (typeof el.className === 'string' ? el.className : '') + ' ' + (el.getAttribute('style') || '');
+        const has = (names, prop) => new RegExp('(^|\\s)(' + names + ')-(\\w+-)?auto(\\s|$)').test(cls) || new RegExp('margin-' + prop + ':\\s*auto').test(cls);
+        return {
+          t: 'box', name: nameOf(el),
+          x: r.x, y: r.y, w: r.width, h: r.height,
+          fills, border, shadows, clip, opacity: op,
+          radius: radiusOf(cs, r.width, r.height),
+          m: {
+            display: cs.display, pos: cs.position, dir: cs.flexDirection, wrap: cs.flexWrap, justify: cs.justifyContent,
+            pad: [
+              px(cs.paddingTop) + (border ? border.top : 0), px(cs.paddingRight) + (border ? border.right : 0),
+              px(cs.paddingBottom) + (border ? border.bottom : 0), px(cs.paddingLeft) + (border ? border.left : 0),
+            ],
+            grow: parFlex ? parseFloat(cs.flexGrow) || 0 : 0,
+            inline: /^inline/.test(cs.display),
+            auto: { l: has('ms|mx|m', 'left'), r: has('me|mx|m', 'right'), t: has('mt|my|m', 'top'), b: has('mb|my|m', 'bottom') },
+          },
+          children: [],
+        };
+      }
+
+
+      // Đoạn văn có chữ đậm/màu khác (span, b, strong...) -> gộp thành MỘT text node có nhiều kiểu, đúng như trình duyệt.
+      const RICH_BAD = new Set(['img', 'svg', 'input', 'button', 'select', 'textarea', 'video', 'canvas', 'iframe', 'object', 'embed', 'picture', 'label']);
+      function hasPseudo(el) {
+        for (const w of ['::before', '::after']) {
+          const c = win.getComputedStyle(el, w).content;
+          if (c && c !== 'none' && c !== 'normal' && c !== '""') return true;
+        }
+        return false;
+      }
+      function boxy(c) {
+        return pc(c.backgroundColor).a > 0 || (c.backgroundImage && c.backgroundImage !== 'none') || c.boxShadow !== 'none'
+          || ['Top', 'Right', 'Bottom', 'Left'].some((d) => px(c['border' + d + 'Width']) > 0 && c['border' + d + 'Style'] !== 'none')
+          || c.position !== 'static' || parseFloat(c.opacity) < 1 || /(^|\s)(inline-)?(block|flex|grid)/.test(c.display) && c.display !== 'inline';
+      }
+      function tryRich(el, cs, out) {
+        if (!/^(block|inline-block|list-item|flow-root)$/.test(cs.display) || cs.whiteSpace.startsWith('pre')) return false;
+        if (hasPseudo(el)) return false;
+        let hasInline = false;
+        const pieces = []; // {text|br, cs}
+        const collect = (node, ncs) => {
+          for (const ch of node.childNodes) {
+            if (ch.nodeType === 3) { pieces.push({ text: ch.nodeValue, cs: ncs }); continue; }
+            if (ch.nodeType !== 1) continue;
+            const tag = ch.tagName.toLowerCase();
+            if (tag === 'br') { pieces.push({ br: true, cs: ncs }); continue; }
+            if (SKIP.has(tag) || RICH_BAD.has(tag)) return false;
+            const c = win.getComputedStyle(ch);
+            if (c.display !== 'inline' || boxy(c) || hasPseudo(ch)) return false;
+            hasInline = true;
+            if (!collect(ch, c)) return false;
+          }
+          return true;
+        };
+        if (!collect(el, cs) || !hasInline) return false;
+
+        let chars = '';
+        const spans = [];
+        let lastSpace = true;
+        for (const p of pieces) {
+          if (p.br) { chars = chars.replace(/ $/, ''); chars += '\n'; lastSpace = true; continue; }
+          let t = p.text.replace(/\s+/g, ' ');
+          if (lastSpace && t[0] === ' ') t = t.slice(1);
+          if (!t) continue;
+          const tt = p.cs.textTransform;
+          if (tt === 'uppercase') t = t.toUpperCase();
+          else if (tt === 'lowercase') t = t.toLowerCase();
+          else if (tt === 'capitalize') t = t.replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase());
+          spans.push({ start: chars.length, end: chars.length + t.length, cs: p.cs });
+          chars += t;
+          lastSpace = t.endsWith(' ');
+        }
+        const trimmed = chars.replace(/ +$/, '');
+        if (!trimmed.trim()) return false;
+        chars = trimmed;
+
+        range.selectNodeContents(el);
+        const b = range.getBoundingClientRect();
+        if (b.width <= 0 || b.height <= 0) return false;
+        const lh = px(cs.lineHeight) || px(cs.fontSize) * 1.21;
+        const lines = Math.max(1, Math.round(b.height / lh));
+        const node = mkText(chars, b, cs, pc(cs.color), lines > 1);
+        node.chars = chars;
+        node.lines = lines;
+        node.runs = spans.filter((sp) => sp.end > sp.start && sp.end <= chars.length).map((sp) => ({
+          start: sp.start, end: sp.end,
+          fontFamily: fontOf(sp.cs), fontSize: px(sp.cs.fontSize),
+          weight: parseInt(sp.cs.fontWeight, 10) || 400,
+          italic: sp.cs.fontStyle === 'italic' || sp.cs.fontStyle === 'oblique',
+          color: pc(sp.cs.color),
+          decoration: /underline/.test(sp.cs.textDecorationLine) ? 'UNDERLINE' : /line-through/.test(sp.cs.textDecorationLine) ? 'STRIKETHROUGH' : 'NONE',
+          letterSpacing: sp.cs.letterSpacing === 'normal' ? 0 : px(sp.cs.letterSpacing),
+        }));
+        out.push(node);
+        return true;
+      }
+
+      // --- duyệt cây ---
+      async function walk(el, out) {
+        const tag = el.tagName.toLowerCase();
+        if (SKIP.has(tag)) return;
+        const cs = win.getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden') return;
+        const op = parseFloat(cs.opacity);
+        if (op === 0) return;
+        const r = el.getBoundingClientRect();
+
+        if (tag === 'svg') {
+          if (r.width > 0 && r.height > 0) out.push(svgNode(el, cs, r));
+          return;
+        }
+
+        const contents = cs.display === 'contents';
+        const node = contents ? null : await boxNode(el, cs, r, tag, op);
+        const target = node ? node.children : out;
+        if (node) out.push(node);
+
+        const replaced = tag === 'img' || tag === 'video' || tag === 'canvas';
+        if (!contents && !replaced) await pseudo(el, '::before', cs, r, target);
+
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+          const type = (el.getAttribute('type') || 'text').toLowerCase();
+          if (!['checkbox', 'radio', 'range', 'file', 'hidden', 'color'].includes(type)) {
+            let value = '';
+            let color = pc(cs.color);
+            if (tag === 'select') {
+              const o = el.options && el.options[el.selectedIndex];
+              value = o ? o.text : '';
+            } else {
+              value = el.value;
+              if (!value && el.placeholder) {
+                value = el.placeholder;
+                color = pc(win.getComputedStyle(el, '::placeholder').color);
+              }
+            }
+            if (type === 'password' && el.value) value = '•'.repeat(el.value.length);
+            if (value) {
+              const pl = px(cs.borderLeftWidth) + px(cs.paddingLeft);
+              const pr = px(cs.borderRightWidth) + px(cs.paddingRight);
+              const lh = px(cs.lineHeight) || px(cs.fontSize) * 1.3;
+              if (tag === 'textarea') {
+                const pt = px(cs.borderTopWidth) + px(cs.paddingTop);
+                target.push(mkText(value, { x: r.x + pl, y: r.y + pt, width: r.width - pl - pr, height: lh }, cs, color, true));
+              } else {
+                const w = Math.max(1, r.width - pl - pr);
+                const rect = { x: r.x + pl, y: r.y + r.height / 2 - lh / 2, width: w, height: lh };
+                const tn = mkText(value, rect, cs, color, false);
+                if (cs.textAlign === 'center') tn.x = r.x + (r.width - w) / 2;
+                target.push(tn);
+              }
+            }
+          }
+        } else if (!replaced && tryRich(el, cs, target)) {
+          // đã gộp thành 1 text nhiều kiểu
+        } else if (!replaced) {
+          for (const ch of el.childNodes) {
+            if (ch.nodeType === 3) textFromNode(ch, cs, target);
+            else if (ch.nodeType === 1) await walk(ch, target);
+          }
+        }
+
+        if (!contents && !replaced) await pseudo(el, '::after', cs, r, target);
+      }
+
+      const htmlCs = win.getComputedStyle(doc.documentElement);
+      const bodyCs = win.getComputedStyle(doc.body);
+      let bg = pc(htmlCs.backgroundColor);
+      if (bg.a === 0) bg = pc(bodyCs.backgroundColor);
+      if (bg.a === 0) bg = { r: 1, g: 1, b: 1, a: 1 };
+
+      const root = {
+        t: 'box', name: doc.title || 'HTML', title: doc.title || '',
+        x: 0, y: 0, w: W, h: H,
+        fills: [solid(bg)], clip: true, children: [],
+      };
+      // Bootstrap .row dùng margin âm + padding cột: đổi sang gap để cấu trúc Auto Layout sạch (hình ảnh giữ nguyên).
+      const rows = [];
+      doc.querySelectorAll('.row').forEach((row) => {
+        const rcs = win.getComputedStyle(row);
+        const ml = px(rcs.marginLeft);
+        if (ml >= 0) return;
+        rows.push({
+          row, gx: -2 * ml, gy: Math.max(0, -px(rcs.marginTop)),
+          kids: Array.from(row.children).map((k) => ({ k, w: k.getBoundingClientRect().width })),
+        });
+      });
+      rows.forEach(({ row, gx, gy, kids }) => {
+        row.style.setProperty('margin', '0', 'important');
+        row.style.setProperty('column-gap', gx + 'px', 'important');
+        row.style.setProperty('row-gap', gy + 'px', 'important');
+        kids.forEach(({ k, w }) => {
+          k.style.setProperty('padding-left', '0', 'important');
+          k.style.setProperty('padding-right', '0', 'important');
+          k.style.setProperty('margin-top', '0', 'important');
+          k.style.setProperty('flex', '0 0 auto', 'important');
+          k.style.setProperty('max-width', 'none', 'important');
+          k.style.setProperty('width', Math.floor((w - gx) * 100) / 100 - 0.02 + 'px', 'important');
+        });
+      });
+
+      root.m = { display: 'block', pos: 'static', pad: [0, 0, 0, 0] };
+      await walk(doc.body, root.children);
+      return root;
+    }
+
+    // ---------- Auto Layout ----------
+    // Chuyển cây vị trí tuyệt đối thành cây Auto Layout. Chỗ nào không khớp hình thật (±1.5px) thì giữ vị trí tuyệt đối cho riêng khối đó.
+    const TOL = 1.5;
+    const isText = (n) => n.t === 'text';
+    const mOf = (n) => n.m || {};
+    const isAbs = (n) => { const p = mOf(n).pos; return p === 'absolute' || p === 'fixed'; };
+    const isInlineLevel = (n) => isText(n) || !!mOf(n).inline;
+    const hasVisual = (n) => (n.fills && n.fills.length) || n.border || (n.shadows && n.shadows.length);
+
+    function layoutify(root) {
+      prune(root);
+      fixText(root);
+      walkLayout(root);
+      root.sz = ['FIXED', 'FIXED'];
+    }
+    function fixText(n) {
+      n.children.forEach((c) => {
+        if (c.t === 'box') fixText(c);
+        else if (isText(c) && c.lineHeight) {
+          const h = c.lineHeight * (c.multiline ? c.lines || 1 : 1);
+          c.y = c.y + c.h / 2 - h / 2;
+          c.h = h;
+        }
+      });
+    }
+    function prune(n) {
+      n.children.forEach((c) => { if (c.t === 'box') prune(c); });
+      n.children = n.children.filter((c) => c.t !== 'box' || hasVisual(c) || c.children.length);
+    }
+    function walkLayout(n) {
+      n.children.forEach((c) => { if (c.t === 'box') walkLayout(c); });
+      analyze(n);
+    }
+
+    function consFor(n, c) {
+      const axis = (a0, a1, s, p, q) => {
+        const l = c[p] - n[p], r = n[p] + n[s] - (c[p] + c[s]);
+        if (c[s] >= n[s] * 0.9 && l >= -1 && r >= -1) return 'STRETCH';
+        if (Math.abs(l - r) <= TOL && l > TOL) return 'CENTER';
+        return l <= r ? a0 : a1;
+      };
+      return { horizontal: axis('MIN', 'MAX', 'w', 'x'), vertical: axis('MIN', 'MAX', 'h', 'y') };
+    }
+
+    function analyze(n) {
+      n.layout = null;
+      n.hugH = n.hugV = n.softH = n.softV = false;
+      const kids = n.children.filter((c) => c.w > 0.01 && c.h > 0.01);
+      kids.forEach((c) => { c.sz = ['FIXED', 'FIXED']; c.abs = isAbs(c); c.cons = consFor(n, c); });
+      const flow = kids.filter((c) => !c.abs);
+      const abs = kids.filter((c) => c.abs);
+      if (!flow.length) return;
+      const plan = planFlow(n, flow);
+      if (!plan) return;
+      n.layout = plan.layout;
+      n.children = plan.ordered.concat(abs);
+      n.hugH = plan.hugH; n.hugV = plan.hugV; n.softH = plan.softH; n.softV = plan.softV;
+      n.softKids = plan.softKids;
+    }
+
+    function planFlow(n, flow) {
+      const m = mOf(n);
+      const disp = m.display || 'block';
+      if (/table/.test(disp)) return null;
+      let cands, canWrap = false;
+      if (/flex/.test(disp)) {
+        const d = /^column/.test(m.dir) ? 'V' : 'H';
+        cands = [d]; canWrap = d === 'H' && m.wrap !== 'nowrap';
+      } else if (/grid/.test(disp)) {
+        canWrap = true;
+        cands = flow.every((c) => Math.abs(c.x - flow[0].x) <= TOL) ? ['V'] : ['H'];
+        if (cands[0] === 'V') canWrap = false;
+      } else if (flow.length === 1 && isText(flow[0])) {
+        cands = ['V'];
+      } else if (flow.every(isInlineLevel)) {
+        cands = ['H', 'V'];
+      } else {
+        cands = ['V'];
+      }
+      for (const dir of cands) {
+        const p = planDir(n, flow, dir, canWrap);
+        if (p) return p;
+      }
+      return null;
+    }
+
+    function baselineOf(c) {
+      if (isText(c)) return c.y + c.h / 2 + 0.363 * c.fontSize;
+      for (const k of c.children || []) {
+        if (k.abs || k.spacer) continue;
+        const b = baselineOf(k);
+        if (b != null) return b;
+      }
+      return c.t === 'box' && !(c.children || []).length ? c.y + c.h : null;
+    }
+
+    function planDir(n, flow, dir, canWrap) {
+      const m = mOf(n);
+      const pad = (m.pad || [0, 0, 0, 0]).slice();
+      const cb = { x: n.x + pad[3], y: n.y + pad[0], r: n.x + n.w - pad[1], b: n.y + n.h - pad[2] };
+      const disp = m.display || 'block';
+      const H = dir === 'H';
+      if (H && !/flex|grid/.test(disp) && flow.length > 1 && flow.some((c) => isText(c) && c.multiline)) return null;
+      const P = H ? 'x' : 'y', S = H ? 'w' : 'h', Q = H ? 'y' : 'x', T_ = H ? 'h' : 'w';
+      const cm0 = H ? cb.x : cb.y, cm1 = H ? cb.r : cb.b, cc0 = H ? cb.y : cb.x, cc1 = H ? cb.b : cb.r;
+      const ctol = !/flex|grid/.test(disp) && H ? 2.5 : TOL;
+
+      // chia dòng
+      const sorted = flow.slice().sort((a, b) => a.y - b.y || a.x - b.x);
+      let lines;
+      if (!H) {
+        lines = [sorted];
+      } else {
+        lines = []; let cur = null, bot = -1e9;
+        for (const c of sorted) {
+          if (cur && c.y < bot - 0.5) { cur.push(c); bot = Math.max(bot, c.y + c.h); }
+          else { cur = [c]; lines.push(cur); bot = c.y + c.h; }
+        }
+        lines.forEach((l) => l.sort((a, b) => a.x - b.x));
+      }
+      const wrap = lines.length > 1;
+      if (wrap && !canWrap) return null;
+
+      // khoảng cách trục chính
+      const gapsByLine = [];
+      for (const line of lines) {
+        const gaps = [];
+        for (let i = 0; i + 1 < line.length; i++) {
+          const g = line[i + 1][P] - (line[i][P] + line[i][S]);
+          gaps.push(g);
+        }
+        gapsByLine.push(gaps);
+      }
+      const L = lines.map((l) => l[0][P] - cm0);
+      const Tt = lines.map((l) => cm1 - (l[l.length - 1][P] + l[l.length - 1][S]));
+
+      let spacing = 0, crossSpacing = 0, primary, sb = false, absorb0 = 0, absorb1 = 0;
+      const spacers = [];
+      if (!wrap) {
+        const line = lines[0], gaps = gapsByLine[0];
+        if (gaps.length) {
+          const mn = Math.min(...gaps), mx = Math.max(...gaps);
+          spacing = mn;
+          if (mn < -0.5 && mx - mn > TOL) return null;
+          if (mx - mn <= TOL) {
+            if (/space-between/.test(m.justify || '') && mn > TOL) sb = true;
+          } else {
+            const mk = (sp) => {
+              spacers.length = 0;
+              for (let i = 0; i < gaps.length; i++) {
+                if (gaps[i] - sp <= TOL) continue;
+                const size = gaps[i] - 2 * sp;
+                if (size < -TOL) return false;
+                const a = mOf(line[i]).auto || {}, b = mOf(line[i + 1]).auto || {};
+                const grow = H ? (a.r || b.l) : (a.b || b.t);
+                spacers.push({ at: i, size: Math.max(0.01, size), grow: !!grow });
+              }
+              return true;
+            };
+            if (!mk(mn)) { spacing = 0; if (!mk(0)) return null; }
+          }
+        }
+        if (sb || spacers.length) {
+          if (L[0] < -TOL || Tt[0] < -TOL) return null;
+          absorb0 = Math.max(0, L[0]); absorb1 = Math.max(0, Tt[0]);
+          primary = sb ? 'SPACE_BETWEEN' : 'MIN';
+        } else if (Math.abs(L[0]) <= TOL) primary = 'MIN';
+        else if (Math.abs(L[0] - Tt[0]) <= TOL) primary = 'CENTER';
+        else if (Math.abs(Tt[0]) <= TOL) primary = 'MAX';
+        else {
+          if (L[0] < -TOL || Tt[0] < -TOL) return null;
+          absorb0 = L[0]; absorb1 = Tt[0]; primary = 'MIN';
+        }
+        L[0] -= absorb0; Tt[0] -= absorb1;
+      } else {
+        const all = [].concat(...gapsByLine);
+        if (all.length) {
+          const mn = Math.min(...all), mx = Math.max(...all);
+          if (mn < -0.5) return null;
+          if (mx - mn > TOL) return null;
+          spacing = mn;
+        }
+        if (L.every((v) => Math.abs(v) <= TOL)) primary = 'MIN';
+        else if (L.every((v, i) => Math.abs(v - Tt[i]) <= TOL)) primary = 'CENTER';
+        else if (Tt.every((v) => Math.abs(v) <= TOL)) primary = 'MAX';
+        else return null;
+        const bands = lines.map((l) => [Math.min(...l.map((c) => c.y)), Math.max(...l.map((c) => c.y + c.h))]);
+        if (Math.abs(bands[0][0] - cb.y) > TOL) return null;
+        const rg = [];
+        for (let i = 0; i + 1 < bands.length; i++) rg.push(bands[i + 1][0] - bands[i][1]);
+        if (Math.min(...rg) < -0.5 || Math.max(...rg) - Math.min(...rg) > TOL) return null;
+        crossSpacing = Math.min(...rg);
+      }
+
+      // căn trục phụ + xác định phần tử "fill"
+      const bandOf = (line) => (wrap ? [Math.min(...line.map((c) => c[Q])), Math.max(...line.map((c) => c[Q] + c[T_]))] : [cc0, cc1]);
+      const fillCross = (c, band) => {
+        if (wrap) return false;
+        if (isText(c)) {
+          if (H || !c.multiline) return false;
+          const a = c.align;
+          if (a === 'LEFT') return Math.abs(c.x - cb.x) <= TOL;
+          if (a === 'CENTER') return Math.abs(c.x + c.w / 2 - (cb.x + cb.r) / 2) <= TOL;
+          if (a === 'RIGHT') return Math.abs(cb.r - (c.x + c.w)) <= TOL;
+          return false;
+        }
+        return Math.abs(c[T_] - (band[1] - band[0])) <= TOL;
+      };
+      const cand = { MIN: true, CENTER: true, MAX: true, BASELINE: H && !wrap };
+      let bl0 = null;
+      for (const line of lines) {
+        const band = bandOf(line);
+        for (const c of line) {
+          if (fillCross(c, band)) continue;
+          const a = c[Q] - band[0], b = band[1] - (c[Q] + c[T_]);
+          if (Math.abs(a) > ctol) cand.MIN = false;
+          if (Math.abs(a - b) > ctol) cand.CENTER = false;
+          if (Math.abs(b) > ctol) cand.MAX = false;
+          if (cand.BASELINE) {
+            const bb = baselineOf(c);
+            if (bb == null) cand.BASELINE = false;
+            else if (bl0 == null) bl0 = bb;
+            else if (Math.abs(bb - bl0) > ctol) cand.BASELINE = false;
+          }
+        }
+      }
+      const counter = cand.MIN ? 'MIN' : cand.CENTER ? 'CENTER' : cand.MAX ? 'MAX' : cand.BASELINE ? 'BASELINE' : null;
+      if (!counter) return null;
+
+      // kích thước từng phần tử
+      const mainIdx = H ? 0 : 1, crossIdx = 1 - mainIdx;
+      const hugOf = (c, idx) => (isText(c) ? (idx === 1 ? true : !c.multiline) : (idx === 0 ? c.hugH : c.hugV));
+      const softOf = (c, idx) => (!isText(c) && (idx === 0 ? c.softH : c.softV));
+      const single = flow.length === 1;
+      let anyFillMain = false;
+      const softKids = [];
+      const sizeFor = (c, idx, fill) => {
+        if (fill) return 'FILL';
+        if (hugOf(c, idx)) return 'HUG';
+        if (softOf(c, idx)) { (c.softKids || []).forEach((t) => { t.sz[idx] = 'HUG'; }); return 'HUG'; }
+        return 'FIXED';
+      };
+      for (const line of lines) {
+        const band = bandOf(line);
+        for (const c of line) {
+          const fm = (mOf(c).grow > 0) || (single && !isText(c) && Math.abs(c[S] - (cm1 - cm0)) <= TOL);
+          const fc = fillCross(c, band);
+          if (fm) anyFillMain = true;
+          c.sz = ['FIXED', 'FIXED'];
+          c.sz[mainIdx] = sizeFor(c, mainIdx, fm);
+          c.sz[crossIdx] = sizeFor(c, crossIdx, fc);
+          if (fc && isText(c) && !c.multiline && !H) softKids.push(c);
+        }
+      }
+
+      // FILL trục chính chỉ giữ khi Figma chia đều ra đúng kích thước thật; nếu lệch thì chốt kích thước cố định.
+      if (anyFillMain && !wrap) {
+        const fills = flow.filter((c) => c.sz[mainIdx] === 'FILL');
+        const growSp2 = spacers.filter((sp) => sp.grow).length;
+        const total = flow.length + spacers.length - 1;
+        const used = flow.reduce((a, c) => a + (c.sz[mainIdx] === 'FILL' ? 0 : c[S]), 0)
+          + spacers.reduce((a, sp) => a + (sp.grow ? 0 : sp.size), 0) + spacing * total;
+        const share = (cm1 - cm0 - used) / (fills.length + growSp2 || 1);
+        const bad = growSp2 > 0 ? fills.length > 0 : fills.some((c) => Math.abs(share - c[S]) > 2);
+        if (bad && !(single && fills.length === 1)) {
+          fills.forEach((c) => { c.sz[mainIdx] = 'FIXED'; });
+          anyFillMain = false;
+        }
+      }
+
+      // hug của chính container
+      const growSp = spacers.some((s) => s.grow);
+      const mainHug = !wrap && primary === 'MIN' && !sb && !spacers.length && !anyFillMain && Math.abs(L[0]) <= TOL && Math.abs(Tt[0]) <= TOL;
+      let crossHug = false, crossSoft = false;
+      if (wrap) {
+        const lastBand = bandOf(lines[lines.length - 1]);
+        crossHug = H && Math.abs(cb.b - lastBand[1]) <= TOL;
+      } else {
+        const nonFill = flow.filter((c) => c.sz[crossIdx] !== 'FILL');
+        if (nonFill.length) {
+          crossHug = Math.max(...nonFill.map((c) => c[T_])) >= (cc1 - cc0) - TOL;
+        } else {
+          crossSoft = softKids.length === flow.length && Math.max(...flow.map((c) => c[T_])) >= (cc1 - cc0) - TOL;
+        }
+      }
+      const hugH = H ? mainHug : crossHug, hugV = H ? crossHug : mainHug;
+      const softH = H ? false : crossSoft, softV = H ? crossSoft : false;
+
+      // dựng danh sách con (có spacer)
+      const ordered = [];
+      lines.forEach((line, li) => {
+        line.forEach((c, i) => {
+          ordered.push(c);
+          const sp = !wrap && spacers.find((s) => s.at === i);
+          if (sp) {
+            const w = H ? sp.size : 1, h = H ? 1 : sp.size;
+            const sz = ['FIXED', 'FIXED'];
+            if (sp.grow) sz[mainIdx] = 'FILL';
+            ordered.push({ t: 'box', name: 'spacer', spacer: true, x: 0, y: 0, w, h, fills: [], children: [], sz });
+          }
+        });
+      });
+
+      return {
+        layout: { dir, wrap, spacing, crossSpacing, primary, counter, pad: H ? [pad[0], pad[1] + absorb1, pad[2], pad[3] + absorb0] : [pad[0] + absorb0, pad[1], pad[2] + absorb1, pad[3]] },
+        ordered, hugH, hugV, softH, softV, softKids,
+      };
+    }
+  </script>
+</body>
+
+</html>
