@@ -20,6 +20,7 @@
   --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
   --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
   --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+  --bs-link-color:#198754;--bs-link-color-rgb:25,135,84;--bs-link-hover-color:#146c43;--bs-link-hover-color-rgb:20,108,67;
 }
 .shadow,.shadow-sm{box-shadow:none!important}
 
@@ -43,6 +44,10 @@ textarea.form-control{min-height:7rem}
 .form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
 .form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
 .form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
+.form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
+.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(25,135,84,.25)}
 
 /* Card outlined bo 12 */
 .card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
@@ -88,7 +93,6 @@ summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer
 <ul class="nav nav-pills nav-fill bg-white rounded-pill p-1 shadow-sm mb-2"><li class="nav-item"><a class="nav-link rounded-pill py-1 text-success" href="#">Học kì 1</a></li><li class="nav-item"><a class="nav-link rounded-pill py-1 text-success" href="#">Học kì 2</a></li><li class="nav-item"><a class="nav-link rounded-pill py-1 active bg-success" href="#">Cả năm</a></li></ul>
 <div class="card border-0 rounded-4 shadow-sm"><div class="card-body text-center py-5"><div class="display-1">📒</div><h2 class="h5 fw-bold mt-2">Chưa có học bạ năm học này</h2><div class="small text-secondary my-2">Nhập điểm HK1, HK2 của từng môn. Điểm cả năm và xếp loại sẽ được tính tự động.</div><a href="23b_hoc-ba-lop-6-tro-len_co-du-lieu.html" class="btn text-nowrap flex-shrink-0 btn-success rounded-pill fw-semibold w-100">＋ Nhập học bạ</a><a href="23b_hoc-ba-lop-6-tro-len_co-du-lieu.html" class="btn text-nowrap flex-shrink-0 btn-outline-success rounded-pill fw-semibold w-100 mt-2">📷 Hoặc tải ảnh bảng điểm lên trước</a></div></div>
 <div class="offcanvas offcanvas-bottom rounded-top-4 h-auto" tabindex="-1" id="pic" aria-labelledby="pict" style="max-height:85vh"><div class="offcanvas-header pb-0"><h2 class="offcanvas-title h6 fw-bold" id="pict">Hình bảng điểm</h2><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button></div><div class="offcanvas-body"><img src="https://placehold.co/600x360/e9ecef/6c757d?text=Anh+bang+diem" width="600" height="360" class="img-fluid rounded-3 w-100 mb-2" alt="Ảnh bảng điểm"><div class="small text-secondary mb-2">Đã tải lên 13/05/2026</div><div class="row g-2"><div class="col-6"><a href="#" class="btn text-nowrap flex-shrink-0 btn-outline-success w-100 rounded-pill">Chụp lại</a></div><div class="col-6"><a href="#" class="btn text-nowrap flex-shrink-0 btn-outline-success w-100 rounded-pill">Chọn ảnh khác</a></div></div></div></div>
-  <div class="d-flex flex-wrap gap-2 mt-3 mb-2" aria-label="Gợi ý"><a href="24b_hoc-ba-dashboard_co-du-lieu.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 bg-success-subtle text-success-emphasis">📊 Dashboard</a><a href="22a_hoc-ba-lop-1-5_trong.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 btn-outline-success">📚 Lớp 1–5</a></div>
 </main>
 </div>
 <div class="modal fade" id="tutorial" tabindex="-1" aria-labelledby="tut-title" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0">

@@ -20,6 +20,7 @@
   --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
   --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
   --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+  --bs-link-color:#198754;--bs-link-color-rgb:25,135,84;--bs-link-hover-color:#146c43;--bs-link-hover-color-rgb:20,108,67;
 }
 .shadow,.shadow-sm{box-shadow:none!important}
 
@@ -43,6 +44,10 @@ textarea.form-control{min-height:7rem}
 .form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
 .form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
 .form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
+.form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
+.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(25,135,84,.25)}
 
 /* Card outlined bo 12 */
 .card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
@@ -84,7 +89,7 @@ summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer
   </header>
   <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
 
-    <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&amp;fit=crop&amp;w=800&amp;h=300&amp;q=80" width="800" height="300" alt="Thêm lần đo. Nhập chiều cao và cân nặng của con để cập nhật điểm thể chất" class="img-fluid w-100 object-fit-cover rounded-4 shadow-sm mb-2" style="max-height:240px">
+    
 <div class="card border-0 rounded-4 shadow-sm mb-2 "><div class="card-body p-3 "><div class="d-flex align-items-center gap-3 w-100"><img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&amp;fit=crop&amp;crop=faces&amp;w=100&amp;h=100&amp;q=80" width="50" height="50" alt="Ảnh Dương Hiền" class="rounded-circle border border-2 border-success object-fit-cover flex-shrink-0"><div class="flex-grow-1 lh-sm"><div class="fw-bold fs-5">Dương Hiền <i class="bi bi-gender-male text-primary" aria-label="Bé trai"></i></div><div class="small text-secondary">13 tuổi · 01/10/2012</div></div></div></div></div>
 <div class="card border-0 rounded-4 shadow-sm mb-2 "><div class="card-body p-3 "><div class="mb-2"><label class="form-label fw-semibold" for="d">Thời điểm cân đo</label><input id="d" type="date" class="form-control form-control-lg" value="2026-10-12"></div><div class="row g-2"><div class="col-6"><label class="form-label fw-semibold" for="h">Chiều cao (cm)</label><input id="h" class="form-control form-control-lg" inputmode="decimal" value="145.0"></div><div class="col-6"><label class="form-label fw-semibold" for="w">Cân nặng (kg)</label><input id="w" class="form-control form-control-lg" inputmode="decimal" value="30.0"></div></div></div></div>
 <div class="alert alert-info rounded-4 small border-0 p-2 mb-2">Để dự đoán chiều cao chính xác, bố mẹ cần nhập <b>2 mốc cách nhau khoảng 12 tháng</b>. Nhớ đổi lại thời điểm cân đo trước khi lưu.</div>

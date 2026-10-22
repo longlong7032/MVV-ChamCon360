@@ -21,6 +21,7 @@
   --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
   --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
   --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+  --bs-link-color:#198754;--bs-link-color-rgb:25,135,84;--bs-link-hover-color:#146c43;--bs-link-hover-color-rgb:20,108,67;
 }
 .shadow,.shadow-sm{box-shadow:none!important}
 
@@ -44,6 +45,10 @@ textarea.form-control{min-height:7rem}
 .form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
 .form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
 .form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
+.form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
+.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(25,135,84,.25)}
 
 /* Card outlined bo 12 */
 .card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
@@ -112,7 +117,7 @@ summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer
           </div>
           <div class="form-text mb-3" id="gt-note" hidden>Chưa biết giới tính khi bé chưa chào đời. Có thể cập nhật sau.</div>
           <div class="form-floating mb-2"><input id="ngay" type="date" class="form-control" value="2016-10-25"><label for="ngay" id="ngay-label">Ngày sinh</label></div>
-          <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="chua"><label class="form-check-label lh-sm" for="chua"><b>Con chưa chào đời</b><small class="d-block text-secondary">Nhập ngày dự sinh để theo dõi thai kỳ</small></label></div>
+          <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="chua"><label class="form-check-label lh-sm" for="chua"><b>Bé chưa chào đời</b><small class="d-block text-secondary">Nhập ngày dự sinh để theo dõi thai kỳ</small></label></div>
       </div>
       </div>
       

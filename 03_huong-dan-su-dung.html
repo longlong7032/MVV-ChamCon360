@@ -20,6 +20,7 @@
   --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
   --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
   --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+  --bs-link-color:#198754;--bs-link-color-rgb:25,135,84;--bs-link-hover-color:#146c43;--bs-link-hover-color-rgb:20,108,67;
 }
 .shadow,.shadow-sm{box-shadow:none!important}
 
@@ -43,6 +44,10 @@ textarea.form-control{min-height:7rem}
 .form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
 .form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
 .form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Màu chọn: xanh thương hiệu thay xanh dương mặc định */
+.form-check-input:checked{background-color:var(--bs-success);border-color:var(--bs-success)}
+.form-control:focus,.form-select:focus,.form-check-input:focus{border-color:var(--bs-success);box-shadow:0 0 0 .25rem rgba(25,135,84,.25)}
 
 /* Card outlined bo 12 */
 .card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
@@ -84,7 +89,7 @@ summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer
   </header>
   <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
 
-    <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&amp;fit=crop&amp;w=800&amp;h=300&amp;q=80" width="800" height="300" alt="Hướng dẫn sử dụng. 3 bước để bắt đầu chăm con cùng Chăm con 360" class="img-fluid w-100 object-fit-cover rounded-4 shadow-sm mb-2" style="max-height:240px">
+    
 <div class="card border-0 rounded-4 shadow-sm mb-2 "><div class="card-body p-3 "><div class="d-flex gap-3 py-2"><span class="badge rounded-circle text-bg-success fs-6 flex-shrink-0 align-self-start" style="width:2rem;height:2rem;line-height:1.5rem">1</span><div>Sau khi đăng nhập, bố mẹ vào <b>"Tạo hồ sơ cho con"</b>. Mỗi con là một hồ sơ riêng.</div></div><div class="d-flex gap-3 py-2"><span class="badge rounded-circle text-bg-success fs-6 flex-shrink-0 align-self-start" style="width:2rem;height:2rem;line-height:1.5rem">2</span><div>Đặt tên con nên dùng tên ở nhà hoặc tên tiếng Anh, thêm giới tính, nhập ngày sinh rồi lưu thông tin.</div></div><div class="d-flex gap-3 py-2"><span class="badge rounded-circle text-bg-success fs-6 flex-shrink-0 align-self-start" style="width:2rem;height:2rem;line-height:1.5rem">3</span><div>Giờ bạn có thể đánh giá một trong năm chỉ số năng lực quan trọng của con.</div></div><div class="row text-center g-2 my-2"><div class="col-4"><div class="fs-1">🏃</div>Thể chất</div><div class="col-4"><div class="fs-1">🧠</div>Trí tuệ</div><div class="col-4"><div class="fs-1">💗</div>Cảm xúc</div></div><div class="small text-secondary text-center">Một đứa trẻ phát triển toàn diện cần cân bằng Thể chất, Trí tuệ và Cảm xúc.</div></div></div>
 <div class="d-flex align-items-center justify-content-between mt-2 mb-2"><h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small" style="width:28px;height:28px">▤</span>Hướng dẫn dự đoán chiều cao</h2></div>
 <div class="card border-0 rounded-4 shadow-sm mb-2 "><div class="card-body p-3 "><div class="d-flex gap-3 py-2"><span class="badge rounded-circle text-bg-success fs-6 flex-shrink-0 align-self-start" style="width:2rem;height:2rem;line-height:1.5rem">1</span><div><b>Nhập chỉ số thể chất (PQ)</b><div class="small text-secondary mt-1">Mở Chỉ số thể chất, bấm dấu +, nhập chiều cao hiện tại và chiều cao cách đây 12 tháng. Nhớ đổi lại thời điểm cân đo trước khi lưu. Phần này bắt buộc thì mới có dự đoán chính xác.</div></div></div><div class="d-flex gap-3 py-2"><span class="badge rounded-circle text-bg-success fs-6 flex-shrink-0 align-self-start" style="width:2rem;height:2rem;line-height:1.5rem">2</span><div><b>Tiến hành dự đoán</b><div class="small text-secondary mt-1">Chọn Công cụ, vào Tiện ích, chọn bé theo ảnh đại diện, rồi chọn "Dự đoán chiều cao của bé".</div></div></div></div></div>
