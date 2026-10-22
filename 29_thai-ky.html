@@ -9,14 +9,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style id="flutter-m3">
-/* Chỉ chỉnh vài biến Bootstrap; phần còn lại dùng class BS5 */
-body{--bs-body-font-size:.875rem}
-.btn{--bs-btn-border-radius:2rem;--bs-btn-padding-y:.5rem;min-height:2.5rem;display:inline-flex;align-items:center;justify-content:center}
-.btn-sm{min-height:2.25rem}.btn-lg{min-height:3rem}
-.btn.rounded-circle{width:2.5rem;padding:0}.btn-sm.rounded-circle{width:2.25rem}
+<style id="theme">
+/* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
+   NGUỒN DUY NHẤT của mọi tinh chỉnh kích thước. Sửa ở đây rồi chạy: python3 tools/apply-theme.py
+   Nguyên tắc: ưu tiên class Bootstrap; chỉ ghi đè biến --bs-* ; chỉ viết rule riêng khi Bootstrap không có class tương ứng. */
+:root{
+  --bs-body-font-size:.875rem;            /* bodyMedium 14 */
+  --bs-body-line-height:1.5;
+  --bs-border-radius:.5rem;
+  --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
+  --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
+  --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+}
 .shadow,.shadow-sm{box-shadow:none!important}
-.card{border:1px solid var(--bs-border-color)!important}.card.bg-success-subtle{border-color:transparent!important}
+
+/* Button: cao 48 (vùng chạm tối thiểu), pill */
+.btn{--bs-btn-padding-x:1.5rem;--bs-btn-padding-y:0;--bs-btn-font-size:.875rem;--bs-btn-font-weight:500;--bs-btn-border-radius:50rem;
+  min-height:3rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.25;max-width:100%}
+.btn-sm{--bs-btn-padding-x:1rem;min-height:2.5rem;position:relative}
+.btn-sm::after{content:"";position:absolute;inset:-.25rem}           /* nới vùng chạm của nút/chip nhỏ lên 48 */
+.btn-lg{--bs-btn-padding-x:2rem;--bs-btn-font-size:1rem;min-height:3.5rem}
+.btn.rounded-circle{width:3rem;padding:0}.btn-sm.rounded-circle{width:2.5rem}
+.btn-link{--bs-btn-padding-x:.75rem}
+
+/* Text field outlined cao 56, bo 4 */
+.form-control,.form-select{--bs-border-radius:.25rem;min-height:3.5rem;font-size:1rem;padding:1rem}
+.form-select{padding-right:2.5rem}
+.form-floating>.form-control,.form-floating>.form-select{height:3.5rem;min-height:3.5rem;padding-top:1.625rem;padding-bottom:.625rem}
+textarea.form-control{min-height:7rem}
+.form-control-sm,.form-select-sm{min-height:3rem;font-size:1rem;padding:.5rem 1rem}
+.form-label{font-size:.75rem;font-weight:500}
+/* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
+.form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
+.form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
+.form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Card outlined bo 12 */
+.card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
+.card.bg-success-subtle{border-color:transparent!important}
+
+/* AppBar 56 · NavigationBar 80 */
+header.sticky-top{min-height:3.5rem}
+.nav.sticky-bottom{min-height:5rem;align-items:center}
+.nav.sticky-bottom .nav-link{min-height:3rem;padding:0}
+
+/* Tab, pill, segmented */
+.nav{--bs-nav-pills-link-active-bg:var(--bs-success);--bs-nav-link-color:var(--bs-success-text-emphasis);--bs-nav-link-hover-color:var(--bs-success);--bs-nav-link-padding-y:.5rem}
+.nav-tabs .nav-link,.nav-pills .nav-link{min-height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500}
+
+/* ListTile 56 */
+.list-group{--bs-list-group-item-padding-y:.5rem;--bs-list-group-item-padding-x:1rem}
+.list-group-item{min-height:3.5rem}
+.accordion{--bs-accordion-btn-padding-y:1rem}
+.accordion-button{min-height:3.5rem}
+
+
+.btn-close{width:3rem;height:3rem;padding:0;background-size:1rem;background-position:center}
+summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer}
+
+/* Khác */
+.badge{--bs-badge-font-weight:500;--bs-badge-border-radius:.5rem}
+.progress{--bs-progress-height:.5rem}
+.modal{--bs-modal-border-radius:1.75rem}
+.offcanvas{--bs-offcanvas-border-radius:1.75rem}
+.offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
 </style>
 </head>
 <body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
@@ -38,7 +94,7 @@ body{--bs-body-font-size:.875rem}
         <div class="mt-2 small"><div class="fw-bold">Tiêu chuẩn tuần 27 (Vinmec)</div><div>Dài: <b>36.6 cm</b></div><div>Nặng: <b>875 g</b></div></div>
       </div></div></div>
     <details class="my-1"><summary class="small text-success fw-medium py-1">ⓘ Lưu ý</summary><div class="small text-secondary pb-2">Số liệu minh họa, cần thay bằng bảng tiêu chuẩn Vinmec do khách cung cấp.</div></details>
-<div class="d-flex align-items-center justify-content-between mt-2 mb-2"><h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small" style="width:28px;height:28px">▤</span>Các lần siêu âm của bạn</h2><a href="#" class="small fw-semibold text-success text-decoration-none">＋ Thêm</a></div>
+<div class="d-flex align-items-center justify-content-between mt-2 mb-2"><h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small" style="width:28px;height:28px">▤</span>Các lần siêu âm của bạn</h2><a href="#" class="btn btn-sm btn-link text-success fw-semibold text-decoration-none">＋ Thêm</a></div>
 <div class="card border-0 rounded-4 shadow-sm mb-2 mb-2"><div class="card-body p-3 "><div class="d-flex align-items-center gap-3"><div class="text-center border-end border-success border-3 pe-3"><div class="fw-bold text-success fs-5">Tuần 25</div><div class="small text-secondary">30/09/2026</div></div><span class="rounded-3 bg-dark d-flex align-items-center justify-content-center fs-1 flex-shrink-0" style="width:76px;height:76px">🩻</span><div class="flex-grow-1 small lh-lg">Cân nặng: <b>700 g</b><br>Chiều dài: <b>34.6 cm</b><br>Chu vi đầu: <b>23 cm</b></div></div></div></div>
 <div class="card border-0 rounded-4 shadow-sm mb-2 mb-2"><div class="card-body p-3 "><div class="d-flex align-items-center gap-3"><div class="text-center border-end border-success border-3 pe-3"><div class="fw-bold text-success fs-5">Tuần 20</div><div class="small text-secondary">26/08/2026</div></div><span class="rounded-3 bg-dark d-flex align-items-center justify-content-center fs-1 flex-shrink-0" style="width:76px;height:76px">🩻</span><div class="flex-grow-1 small lh-lg">Cân nặng: <b>310 g</b><br>Chiều dài: <b>25.9 cm</b><br>Chu vi đầu: <b>17.5 cm</b></div></div></div></div>
 <details class="my-1"><summary class="small text-success fw-medium py-1">ⓘ Chi tiết</summary><div class="small text-secondary pb-2">Chỉ số của bé được so với tiêu chuẩn cùng tuần thai. Nếu có điều bất thường, hãy hỏi ý kiến bác sĩ sản khoa.</div></details>

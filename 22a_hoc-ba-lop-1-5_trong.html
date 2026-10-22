@@ -9,14 +9,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style id="flutter-m3">
-/* Chỉ chỉnh vài biến Bootstrap; phần còn lại dùng class BS5 */
-body{--bs-body-font-size:.875rem}
-.btn{--bs-btn-border-radius:2rem;--bs-btn-padding-y:.5rem;min-height:2.5rem;display:inline-flex;align-items:center;justify-content:center}
-.btn-sm{min-height:2.25rem}.btn-lg{min-height:3rem}
-.btn.rounded-circle{width:2.5rem;padding:0}.btn-sm.rounded-circle{width:2.25rem}
+<style id="theme">
+/* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
+   NGUỒN DUY NHẤT của mọi tinh chỉnh kích thước. Sửa ở đây rồi chạy: python3 tools/apply-theme.py
+   Nguyên tắc: ưu tiên class Bootstrap; chỉ ghi đè biến --bs-* ; chỉ viết rule riêng khi Bootstrap không có class tương ứng. */
+:root{
+  --bs-body-font-size:.875rem;            /* bodyMedium 14 */
+  --bs-body-line-height:1.5;
+  --bs-border-radius:.5rem;
+  --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
+  --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
+  --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+}
 .shadow,.shadow-sm{box-shadow:none!important}
-.card{border:1px solid var(--bs-border-color)!important}.card.bg-success-subtle{border-color:transparent!important}
+
+/* Button: cao 48 (vùng chạm tối thiểu), pill */
+.btn{--bs-btn-padding-x:1.5rem;--bs-btn-padding-y:0;--bs-btn-font-size:.875rem;--bs-btn-font-weight:500;--bs-btn-border-radius:50rem;
+  min-height:3rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.25;max-width:100%}
+.btn-sm{--bs-btn-padding-x:1rem;min-height:2.5rem;position:relative}
+.btn-sm::after{content:"";position:absolute;inset:-.25rem}           /* nới vùng chạm của nút/chip nhỏ lên 48 */
+.btn-lg{--bs-btn-padding-x:2rem;--bs-btn-font-size:1rem;min-height:3.5rem}
+.btn.rounded-circle{width:3rem;padding:0}.btn-sm.rounded-circle{width:2.5rem}
+.btn-link{--bs-btn-padding-x:.75rem}
+
+/* Text field outlined cao 56, bo 4 */
+.form-control,.form-select{--bs-border-radius:.25rem;min-height:3.5rem;font-size:1rem;padding:1rem}
+.form-select{padding-right:2.5rem}
+.form-floating>.form-control,.form-floating>.form-select{height:3.5rem;min-height:3.5rem;padding-top:1.625rem;padding-bottom:.625rem}
+textarea.form-control{min-height:7rem}
+.form-control-sm,.form-select-sm{min-height:3rem;font-size:1rem;padding:.5rem 1rem}
+.form-label{font-size:.75rem;font-weight:500}
+/* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
+.form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
+.form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
+.form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Card outlined bo 12 */
+.card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
+.card.bg-success-subtle{border-color:transparent!important}
+
+/* AppBar 56 · NavigationBar 80 */
+header.sticky-top{min-height:3.5rem}
+.nav.sticky-bottom{min-height:5rem;align-items:center}
+.nav.sticky-bottom .nav-link{min-height:3rem;padding:0}
+
+/* Tab, pill, segmented */
+.nav{--bs-nav-pills-link-active-bg:var(--bs-success);--bs-nav-link-color:var(--bs-success-text-emphasis);--bs-nav-link-hover-color:var(--bs-success);--bs-nav-link-padding-y:.5rem}
+.nav-tabs .nav-link,.nav-pills .nav-link{min-height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500}
+
+/* ListTile 56 */
+.list-group{--bs-list-group-item-padding-y:.5rem;--bs-list-group-item-padding-x:1rem}
+.list-group-item{min-height:3.5rem}
+.accordion{--bs-accordion-btn-padding-y:1rem}
+.accordion-button{min-height:3.5rem}
+
+
+.btn-close{width:3rem;height:3rem;padding:0;background-size:1rem;background-position:center}
+summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer}
+
+/* Khác */
+.badge{--bs-badge-font-weight:500;--bs-badge-border-radius:.5rem}
+.progress{--bs-progress-height:.5rem}
+.modal{--bs-modal-border-radius:1.75rem}
+.offcanvas{--bs-offcanvas-border-radius:1.75rem}
+.offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
 </style>
 </head>
 <body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
@@ -29,7 +85,7 @@ body{--bs-body-font-size:.875rem}
   <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
     <div class="d-flex gap-2 overflow-auto pb-1 mt-2 mb-2" aria-label="Gợi ý"><a href="24b_hoc-ba-dashboard_co-du-lieu.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 bg-success-subtle text-success-emphasis">📊 Dashboard</a><a href="23a_hoc-ba-lop-6-tro-len_trong.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 btn-outline-success">📚 Lớp 6+</a></div>
 
-<div class="d-flex align-items-center gap-2 mb-2"><img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&amp;fit=crop&amp;crop=faces&amp;w=80&amp;h=80&amp;q=80" width="40" height="40" alt="Ảnh Bé Mon" class="rounded-circle border border-2 border-success object-fit-cover flex-shrink-0"><div class="flex-grow-1 lh-sm"><div class="fw-bold">Bé Mon <i class="bi bi-gender-female text-danger" aria-label="Bé gái"></i></div><div class="small text-secondary">Năm học 2025–2026 · Tiểu học</div></div><a href="23b_hoc-ba-lop-6-tro-len_co-du-lieu.html" class="d-inline-flex align-items-center gap-1 px-3 rounded-pill bg-success text-white fw-medium text-decoration-none" style="height:32px;font-size:14px;line-height:1">Lớp 1<i class="bi bi-chevron-down" style="font-size:12px"></i></a></div>
+<div class="d-flex align-items-center gap-2 mb-2"><img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&amp;fit=crop&amp;crop=faces&amp;w=80&amp;h=80&amp;q=80" width="40" height="40" alt="Ảnh Bé Mon" class="rounded-circle border border-2 border-success object-fit-cover flex-shrink-0"><div class="flex-grow-1 lh-sm"><div class="fw-bold">Bé Mon <i class="bi bi-gender-female text-danger" aria-label="Bé gái"></i></div><div class="small text-secondary">Năm học 2025–2026 · Tiểu học</div></div><a href="23b_hoc-ba-lop-6-tro-len_co-du-lieu.html" class="btn btn-sm btn-success">Lớp 1<i class="bi bi-chevron-down"></i></a></div>
 <ul class="nav nav-pills nav-fill bg-white rounded-pill p-1 shadow-sm mb-2"><li class="nav-item"><a class="nav-link rounded-pill py-1 text-success" href="#">Học kì 1</a></li><li class="nav-item"><a class="nav-link rounded-pill py-1 text-success" href="#">Học kì 2</a></li><li class="nav-item"><a class="nav-link rounded-pill py-1 active bg-success" href="#">Cả năm</a></li></ul>
 <div class="card border-0 rounded-4 shadow-sm"><div class="card-body text-center py-5"><div class="display-1">📒</div><h2 class="h5 fw-bold mt-2">Chưa có học bạ năm học này</h2><details class="my-1"><summary class="small text-success fw-medium py-1">ⓘ Chi tiết</summary><div class="small text-secondary pb-2">Nhập điểm và nhận xét các môn của con. Điểm cả năm sẽ tự lấy theo Học kì 2, bố mẹ chỉ cần kiểm tra lại.</div></details><a href="22b_hoc-ba-lop-1-5_co-du-lieu.html" class="btn text-nowrap flex-shrink-0 btn-success rounded-pill fw-semibold w-100">＋ Nhập học bạ</a><a href="22b_hoc-ba-lop-1-5_co-du-lieu.html" class="btn text-nowrap flex-shrink-0 btn-outline-success rounded-pill fw-semibold w-100 mt-2">📷 Hoặc tải ảnh bảng điểm lên trước</a></div></div>
 <div class="offcanvas offcanvas-bottom rounded-top-4 h-auto" tabindex="-1" id="pic" aria-labelledby="pict" style="max-height:85vh"><div class="offcanvas-header pb-0"><h2 class="offcanvas-title h6 fw-bold" id="pict">Hình bảng điểm</h2><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button></div><div class="offcanvas-body"><img src="https://placehold.co/600x360/e9ecef/6c757d?text=Anh+bang+diem" width="600" height="360" class="img-fluid rounded-3 w-100 mb-2" alt="Ảnh bảng điểm"><div class="small text-secondary mb-2">Đã tải lên 13/05/2026</div><div class="row g-2"><div class="col-6"><a href="#" class="btn text-nowrap flex-shrink-0 btn-outline-success w-100 rounded-pill">Chụp lại</a></div><div class="col-6"><a href="#" class="btn text-nowrap flex-shrink-0 btn-outline-success w-100 rounded-pill">Chọn ảnh khác</a></div></div></div></div>

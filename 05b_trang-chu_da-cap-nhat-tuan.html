@@ -9,14 +9,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style id="flutter-m3">
-/* Chỉ chỉnh vài biến Bootstrap; phần còn lại dùng class BS5 */
-body{--bs-body-font-size:.875rem}
-.btn{--bs-btn-border-radius:2rem;--bs-btn-padding-y:.5rem;min-height:2.5rem;display:inline-flex;align-items:center;justify-content:center}
-.btn-sm{min-height:2.25rem}.btn-lg{min-height:3rem}
-.btn.rounded-circle{width:2.5rem;padding:0}.btn-sm.rounded-circle{width:2.25rem}
+<style id="theme">
+/* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
+   NGUỒN DUY NHẤT của mọi tinh chỉnh kích thước. Sửa ở đây rồi chạy: python3 tools/apply-theme.py
+   Nguyên tắc: ưu tiên class Bootstrap; chỉ ghi đè biến --bs-* ; chỉ viết rule riêng khi Bootstrap không có class tương ứng. */
+:root{
+  --bs-body-font-size:.875rem;            /* bodyMedium 14 */
+  --bs-body-line-height:1.5;
+  --bs-border-radius:.5rem;
+  --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
+  --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
+  --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+}
 .shadow,.shadow-sm{box-shadow:none!important}
-.card{border:1px solid var(--bs-border-color)!important}.card.bg-success-subtle{border-color:transparent!important}
+
+/* Button: cao 48 (vùng chạm tối thiểu), pill */
+.btn{--bs-btn-padding-x:1.5rem;--bs-btn-padding-y:0;--bs-btn-font-size:.875rem;--bs-btn-font-weight:500;--bs-btn-border-radius:50rem;
+  min-height:3rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.25;max-width:100%}
+.btn-sm{--bs-btn-padding-x:1rem;min-height:2.5rem;position:relative}
+.btn-sm::after{content:"";position:absolute;inset:-.25rem}           /* nới vùng chạm của nút/chip nhỏ lên 48 */
+.btn-lg{--bs-btn-padding-x:2rem;--bs-btn-font-size:1rem;min-height:3.5rem}
+.btn.rounded-circle{width:3rem;padding:0}.btn-sm.rounded-circle{width:2.5rem}
+.btn-link{--bs-btn-padding-x:.75rem}
+
+/* Text field outlined cao 56, bo 4 */
+.form-control,.form-select{--bs-border-radius:.25rem;min-height:3.5rem;font-size:1rem;padding:1rem}
+.form-select{padding-right:2.5rem}
+.form-floating>.form-control,.form-floating>.form-select{height:3.5rem;min-height:3.5rem;padding-top:1.625rem;padding-bottom:.625rem}
+textarea.form-control{min-height:7rem}
+.form-control-sm,.form-select-sm{min-height:3rem;font-size:1rem;padding:.5rem 1rem}
+.form-label{font-size:.75rem;font-weight:500}
+/* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
+.form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
+.form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
+.form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Card outlined bo 12 */
+.card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
+.card.bg-success-subtle{border-color:transparent!important}
+
+/* AppBar 56 · NavigationBar 80 */
+header.sticky-top{min-height:3.5rem}
+.nav.sticky-bottom{min-height:5rem;align-items:center}
+.nav.sticky-bottom .nav-link{min-height:3rem;padding:0}
+
+/* Tab, pill, segmented */
+.nav{--bs-nav-pills-link-active-bg:var(--bs-success);--bs-nav-link-color:var(--bs-success-text-emphasis);--bs-nav-link-hover-color:var(--bs-success);--bs-nav-link-padding-y:.5rem}
+.nav-tabs .nav-link,.nav-pills .nav-link{min-height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500}
+
+/* ListTile 56 */
+.list-group{--bs-list-group-item-padding-y:.5rem;--bs-list-group-item-padding-x:1rem}
+.list-group-item{min-height:3.5rem}
+.accordion{--bs-accordion-btn-padding-y:1rem}
+.accordion-button{min-height:3.5rem}
+
+
+.btn-close{width:3rem;height:3rem;padding:0;background-size:1rem;background-position:center}
+summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer}
+
+/* Khác */
+.badge{--bs-badge-font-weight:500;--bs-badge-border-radius:.5rem}
+.progress{--bs-progress-height:.5rem}
+.modal{--bs-modal-border-radius:1.75rem}
+.offcanvas{--bs-offcanvas-border-radius:1.75rem}
+.offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
 </style>
 </head>
 <body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
@@ -36,7 +92,7 @@ body{--bs-body-font-size:.875rem}
     <div class="d-flex gap-2 overflow-auto pb-1 mt-2 mb-2" aria-label="Gợi ý"><a href="08_cap-nhat-tuan-ket-qua.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 bg-success-subtle text-success-emphasis">📊 Kết quả tuần</a><a href="14a_iq-tong-quan_trong.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 btn-outline-success">💡 Làm IQ</a><a href="26_chieu-cao-du-doan.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 btn-outline-success">📈 Dự đoán chiều cao</a><a href="39_cai-dat-nhac-nho.html" class="btn btn-sm rounded-pill text-nowrap flex-shrink-0 btn-outline-success">⏰ Đổi giờ nhắc</a></div>
     
     <div class="d-flex align-items-center justify-content-between mt-2 mb-2"><h2 class="h6 fw-bold mb-0 d-flex align-items-center"><span class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-3 me-2 small" style="width:28px;height:28px">▤</span>Đánh giá toàn diện</h2></div>
-    <div class="card border-0 rounded-4 shadow-sm mb-2"><div class="card-body p-2"><div class="row g-0 align-items-center"><div class="col-8 col-md-5 mx-auto w-100"><svg class="w-100" viewBox="-10 0 260 230" role="img" aria-label="Biểu đồ radar 5 lĩnh vực">
+    <div class="card border-0 rounded-4 shadow-sm mb-2"><div class="card-body p-2"><div class="row g-0 align-items-center"><div class="col-12 col-md-6 mx-auto"><svg class="w-100" viewBox="-10 0 260 230" role="img" aria-label="Biểu đồ radar 5 lĩnh vực">
 <g transform="translate(20,18)" fill="none" stroke="#c9e3dd"><polygon points="100,82 117,94 111,114 89,114 83,94"/><polygon points="100,64 134,89 121,129 79,129 66,89"/><polygon points="100,46 151,83 130,144 70,144 49,83"/><polygon points="100,28 168,77 139,159 61,159 32,77"/><polygon points="100,10 185,72 148,174 52,174 15,72"/><path d="M100 100V10M100 100l85-28M100 100l48 74M100 100l-48 74M100 100 15 72"/></g>
 <g transform="translate(20,18)"><polygon points="100,13 100,100 148,174 63,157 39,80" fill="rgba(25,135,84,.22)" stroke="#198754" stroke-width="2.5" stroke-linejoin="round"/><g fill="#198754"><circle cx="100" cy="13" r="4.5"/><circle cx="148" cy="174" r="4.5"/><circle cx="63" cy="157" r="4.5"/><circle cx="39" cy="80" r="4.5"/></g></g>
 <g font-size="12" font-weight="700" fill="#212529" text-anchor="middle"><text x="120" y="14">Thể chất</text><text x="215" y="78">Trí tuệ</text><text x="172" y="218">Học lực</text><text x="68" y="218">Cảm xúc</text><text x="25" y="78">Vượt khó</text></g></svg></div></div></div></div>

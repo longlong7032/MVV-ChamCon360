@@ -9,21 +9,77 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<style id="flutter-m3">
-/* Chỉ chỉnh vài biến Bootstrap; phần còn lại dùng class BS5 */
-body{--bs-body-font-size:.875rem}
-.btn{--bs-btn-border-radius:2rem;--bs-btn-padding-y:.5rem;min-height:2.5rem;display:inline-flex;align-items:center;justify-content:center}
-.btn-sm{min-height:2.25rem}.btn-lg{min-height:3rem}
-.btn.rounded-circle{width:2.5rem;padding:0}.btn-sm.rounded-circle{width:2.25rem}
+<style id="theme">
+/* Chăm con 360 · theme Material 3 (Flutter) trên Bootstrap 5.3
+   NGUỒN DUY NHẤT của mọi tinh chỉnh kích thước. Sửa ở đây rồi chạy: python3 tools/apply-theme.py
+   Nguyên tắc: ưu tiên class Bootstrap; chỉ ghi đè biến --bs-* ; chỉ viết rule riêng khi Bootstrap không có class tương ứng. */
+:root{
+  --bs-body-font-size:.875rem;            /* bodyMedium 14 */
+  --bs-body-line-height:1.5;
+  --bs-border-radius:.5rem;
+  --bs-border-radius-lg:.75rem;           /* rounded-3: card, ô nhập = 12 */
+  --bs-border-radius-xl:1rem;             /* rounded-4 = 16 */
+  --bs-border-radius-xxl:1.75rem;         /* rounded-5 = 28 (sheet, dialog) */
+}
 .shadow,.shadow-sm{box-shadow:none!important}
-.card{border:1px solid var(--bs-border-color)!important}.card.bg-success-subtle{border-color:transparent!important}
+
+/* Button: cao 48 (vùng chạm tối thiểu), pill */
+.btn{--bs-btn-padding-x:1.5rem;--bs-btn-padding-y:0;--bs-btn-font-size:.875rem;--bs-btn-font-weight:500;--bs-btn-border-radius:50rem;
+  min-height:3rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.25;max-width:100%}
+.btn-sm{--bs-btn-padding-x:1rem;min-height:2.5rem;position:relative}
+.btn-sm::after{content:"";position:absolute;inset:-.25rem}           /* nới vùng chạm của nút/chip nhỏ lên 48 */
+.btn-lg{--bs-btn-padding-x:2rem;--bs-btn-font-size:1rem;min-height:3.5rem}
+.btn.rounded-circle{width:3rem;padding:0}.btn-sm.rounded-circle{width:2.5rem}
+.btn-link{--bs-btn-padding-x:.75rem}
+
+/* Text field outlined cao 56, bo 4 */
+.form-control,.form-select{--bs-border-radius:.25rem;min-height:3.5rem;font-size:1rem;padding:1rem}
+.form-select{padding-right:2.5rem}
+.form-floating>.form-control,.form-floating>.form-select{height:3.5rem;min-height:3.5rem;padding-top:1.625rem;padding-bottom:.625rem}
+textarea.form-control{min-height:7rem}
+.form-control-sm,.form-select-sm{min-height:3rem;font-size:1rem;padding:.5rem 1rem}
+.form-label{font-size:.75rem;font-weight:500}
+/* Switch 52x32, checkbox/radio 20 + vùng chạm 48 */
+.form-check{min-height:3rem;display:flex;align-items:center;gap:.75rem;padding-left:0}
+.form-check .form-check-input{float:none;margin:0;flex-shrink:0;width:1.25rem;height:1.25rem}
+.form-switch .form-check-input{width:3.25rem;height:2rem;border-radius:1rem;background-size:1.25rem}
+
+/* Card outlined bo 12 */
+.card{--bs-card-border-radius:.75rem;--bs-card-border-color:var(--bs-border-color);--bs-card-cap-bg:transparent;border:1px solid var(--bs-border-color)!important}
+.card.bg-success-subtle{border-color:transparent!important}
+
+/* AppBar 56 · NavigationBar 80 */
+header.sticky-top{min-height:3.5rem}
+.nav.sticky-bottom{min-height:5rem;align-items:center}
+.nav.sticky-bottom .nav-link{min-height:3rem;padding:0}
+
+/* Tab, pill, segmented */
+.nav{--bs-nav-pills-link-active-bg:var(--bs-success);--bs-nav-link-color:var(--bs-success-text-emphasis);--bs-nav-link-hover-color:var(--bs-success);--bs-nav-link-padding-y:.5rem}
+.nav-tabs .nav-link,.nav-pills .nav-link{min-height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:500}
+
+/* ListTile 56 */
+.list-group{--bs-list-group-item-padding-y:.5rem;--bs-list-group-item-padding-x:1rem}
+.list-group-item{min-height:3.5rem}
+.accordion{--bs-accordion-btn-padding-y:1rem}
+.accordion-button{min-height:3.5rem}
+
+
+.btn-close{width:3rem;height:3rem;padding:0;background-size:1rem;background-position:center}
+summary{min-height:3rem;display:flex;align-items:center;gap:.5rem;cursor:pointer}
+
+/* Khác */
+.badge{--bs-badge-font-weight:500;--bs-badge-border-radius:.5rem}
+.progress{--bs-progress-height:.5rem}
+.modal{--bs-modal-border-radius:1.75rem}
+.offcanvas{--bs-offcanvas-border-radius:1.75rem}
+.offcanvas-bottom{border-radius:1.75rem 1.75rem 0 0}
 </style>
 </head>
 <body class="bg-light" style="--bs-body-font-family:Inter,system-ui,sans-serif;--bs-body-font-size:.9375rem;--bs-body-line-height:1.4">
 <div class="container-fluid mx-auto d-flex flex-column min-vh-100 px-0 shadow-sm" style="max-width:820px">
   <header class="bg-success text-white pt-3 pb-5 px-3 rounded-bottom-4">
     <div class="d-flex align-items-center gap-3"><span class="rounded-circle bg-white text-success fw-bold fs-4 d-flex align-items-center justify-content-center shadow-sm flex-shrink-0" style="width:60px;height:60px">LN</span>
-      <div class="flex-grow-1 lh-sm"><div class="fs-5 fw-bold">Nguyễn Thị Linh</div><a href="41_hang-bo-me.html" class="badge rounded-pill bg-white text-success text-decoration-none mt-1">🥈 Bố mẹ Đồng hành ›</a></div><button type="button" class="btn text-nowrap flex-shrink-0 btn-light btn-sm rounded-circle fw-bold" data-bs-toggle="modal" data-bs-target="#tutorial" aria-label="Hướng dẫn sử dụng">?</button></div>
+      <div class="flex-grow-1 lh-sm"><div class="fs-5 fw-bold">Nguyễn Thị Linh</div><a href="41_hang-bo-me.html" class="btn btn-sm btn-light text-success mt-1">🥈 Bố mẹ Đồng hành ›</a></div><button type="button" class="btn text-nowrap flex-shrink-0 btn-light btn-sm rounded-circle fw-bold" data-bs-toggle="modal" data-bs-target="#tutorial" aria-label="Hướng dẫn sử dụng">?</button></div>
   </header>
   <main class="flex-grow-1 d-flex flex-column px-2 pb-2">
 

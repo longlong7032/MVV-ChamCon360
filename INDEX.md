@@ -65,3 +65,9 @@ Game lật thẻ là bài **Trí nhớ** của IQ: làm xong câu hỏi (màn 17
 - Bảng tiêu chuẩn thai kỳ Vinmec (màn 17), bảng WHO (màn 03, 10).
 - Nội dung Giới thiệu và thông tin chuyên gia (màn 24, 25).
 - Hình minh họa PQ, IQ, EQ, AQ, GPA đang là huy hiệu chữ, thay bằng hình gốc trong Figma.
+
+## Quy ước giao diện (dễ bảo trì)
+- Dùng class Bootstrap 5 trước; chỉ khi class không đáp ứng mới viết CSS riêng.
+- Mọi tinh chỉnh kích thước theo Flutter Material 3 nằm ở **theme.css** (nguồn duy nhất, ghi đè biến `--bs-*`). Sửa xong chạy `python3 tools/apply-theme.py` để nhúng vào mọi màn (nhúng inline để plugin HTML→Figma vẫn đọc được).
+- Kiểm tra tự động ở khổ 390px: `node tools/audit.mjs` (chữ tràn, nút nhỏ hơn 44px, trang tràn ngang). Chụp màn: `node tools/shot.mjs <thư mục> <số màn...>`.
+- Cỡ chạm: nút cao 48px, ô nhập 56px, dòng danh sách 56px, thanh điều hướng 80px, AppBar 56px.
