@@ -10,7 +10,7 @@ Biến file HTML (như các màn `01_...html` … `44_...html` của dự án) t
 
 ## Cách dùng
 - Chọn một hoặc nhiều file `.html` (hoặc dán mã HTML vào ô).
-- Chọn kích thước khung theo thiết bị (mặc định iPhone 393 × 852; có Android, iPad dọc/ngang). Trang dài hơn chiều cao khung thì frame kéo dài theo nội dung.
+- Chọn kích thước khung theo thiết bị (mặc định 390 × 844, đúng khổ website; có Android, iPad dọc/ngang). Trang dài hơn chiều cao khung thì frame kéo dài theo nội dung.
 - Bấm **Nhập vào Figma**. Mỗi trang thành một frame, xếp nối nhau bên phải.
 
 ## Cách hoạt động

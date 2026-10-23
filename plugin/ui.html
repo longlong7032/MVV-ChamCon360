@@ -27,7 +27,8 @@
   <select id="width"
     class="w-full rounded-md border border-[var(--figma-color-border,#ccc)] bg-[var(--figma-color-bg-secondary,#f6f6f6)] p-2 font-mono text-xs text-inherit">
     <optgroup label="Mobile">
-      <option value="393x852" selected>393 × 852 – iPhone 14/15/16 (chuẩn)</option>
+      <option value="390x844" selected>390 × 844 – Chuẩn website Chăm con 360</option>
+      <option value="393x852">393 × 852 – iPhone 14/15/16</option>
       <option value="430x932">430 × 932 – iPhone Pro Max / Plus</option>
       <option value="375x812">375 × 812 – iPhone X/11 Pro/13 Mini</option>
       <option value="360x800">360 × 800 – Android chuẩn 360</option>
@@ -78,7 +79,13 @@
       $('log').scrollTop = 1e9;
     }
     function setFiles(list) {
-      pickedFiles = Array.from(list).filter((f) => /\.html?$/i.test(f.name));
+      const seen = new Set();
+      pickedFiles = Array.from(list).filter((f) => {
+        const key = f.name + '|' + f.size + '|' + f.lastModified;
+        if (!/\.html?$/i.test(f.name) || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       $('files').textContent = pickedFiles.length ? pickedFiles.map((f) => f.name).join(', ') : '';
     }
     $('drop').onclick = () => $('file').click();
@@ -106,13 +113,20 @@
       });
     }
 
+    let running = false;
     $('go').onclick = async () => {
+      if (running) return;
+      running = true;
+      $('go').disabled = true;
+      try { await runImport(); } finally { running = false; $('go').disabled = false; }
+    };
+
+    async function runImport() {
       const jobs = [];
       for (const f of pickedFiles) jobs.push({ name: f.name.replace(/\.html?$/i, ''), html: await f.text() });
       if (!jobs.length && $('code').value.trim()) jobs.push({ name: 'HTML', html: $('code').value });
       if (!jobs.length) { log('Chưa có HTML. Hãy chọn file hoặc dán mã.', ERR); return; }
 
-      $('go').disabled = true;
       const [width, height] = $('width').value.split('x').map(Number);
       let ok = 0;
       for (const job of jobs) {
@@ -129,8 +143,7 @@
       }
       parent.postMessage({ pluginMessage: { type: 'finish' } }, '*');
       log('Xong: ' + ok + '/' + jobs.length + ' trang.');
-      $('go').disabled = false;
-    };
+    }
 
     // ---------- Render HTML trong iframe ẩn ----------
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -293,6 +306,34 @@
         return res;
       }
 
+      // Ảnh nền có kích thước/vị trí cụ thể (vd. núm gạt của form-switch, dấu tick checkbox):
+      // vẽ sẵn lên canvas đúng cỡ hộp để dùng làm 1 fill.
+      async function composeBg(url, size, pos, W, H) {
+        const img = new Image();
+        await new Promise((res) => { img.onload = img.onerror = res; img.src = url; });
+        const nw = img.naturalWidth || 1, nh = img.naturalHeight || 1;
+        const len = (t, ref) => (!t || t === 'auto' ? null : t.endsWith('%') ? (parseFloat(t) / 100) * ref : parseFloat(t));
+        const st = size.trim().split(/\s+/);
+        let w = len(st[0], W), h = len(st[1] || 'auto', H);
+        if (w == null && h == null) { w = nw; h = nh; }
+        else if (w == null) w = (h * nw) / nh;
+        else if (h == null) h = (w * nh) / nw;
+        const ps = (pos || '0% 0%').trim().split(/\s+/);
+        const at = (t, space) => (t.endsWith('%') ? ((space * parseFloat(t)) / 100) : parseFloat(t) || 0);
+        const dx = at(ps[0], W - w), dy = at(ps[1] || '50%', H - h);
+        const K = 3;
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(W * K));
+        c.height = Math.max(1, Math.round(H * K));
+        try {
+          c.getContext('2d').drawImage(img, dx * K, dy * K, w * K, h * K);
+          const png = await new Promise((r) => c.toBlob(r, 'image/png'));
+          return new Uint8Array(await png.arrayBuffer());
+        } catch (e) {
+          return null;
+        }
+      }
+
       // --- shadow ---
       function parseShadows(str) {
         if (!str || str === 'none') return [];
@@ -385,8 +426,41 @@
         const b = range.getBoundingClientRect();
         const lines = new Set(rects.map((r) => Math.round(r.top))).size;
         const color = pc(pcs.color);
+        // Chốt điểm xuống dòng theo trình duyệt để Figma (font rộng hơn chút) không rớt thêm dòng.
+        if (lines > 1 && !pre && s === raw.slice(start, end)) {
+          let out2 = '', lineTop = null;
+          for (let i = start; i < end; i++) {
+            const ch = raw[i];
+            if (ch !== ' ') {
+              range.setStart(tn, i);
+              range.setEnd(tn, i + 1);
+              const cr = range.getClientRects()[0];
+              if (cr && cr.height > 0) {
+                if (lineTop === null) lineTop = cr.top;
+                else if (cr.top > lineTop + cr.height * 0.5) {
+                  out2 = out2.endsWith(' ') ? out2.slice(0, -1) + '\n' : out2 + '\n';
+                  lineTop = cr.top;
+                }
+              }
+            }
+            out2 += ch;
+          }
+          s = out2;
+        }
         const tnode = mkText(s, b, pcs, color, lines > 1);
         tnode.lines = lines;
+        tnode.hard = s.includes('\n');
+        // transform: scale() (vd. nhãn form-floating) làm chữ nhỏ đi nhưng font-size tính toán không đổi
+        let sc = 1;
+        for (let e = tn.parentElement, d = 0; e && e !== doc.body && d < 4; e = e.parentElement, d++) {
+          const tf = win.getComputedStyle(e).transform;
+          if (tf && tf !== 'none') { try { const m = new win.DOMMatrix(tf); sc *= Math.hypot(m.a, m.b) || 1; } catch (er) { } }
+        }
+        if (Math.abs(sc - 1) > 0.01) {
+          tnode.fontSize *= sc;
+          if (tnode.lineHeight) tnode.lineHeight *= sc;
+          tnode.letterSpacing *= sc;
+        }
         out.push(tnode);
       }
 
@@ -482,6 +556,13 @@
             } else if (v.startsWith('url(')) {
               const u = /url\((?:"|')?(.*?)(?:"|')?\)/.exec(v);
               if (u) {
+                const sz = (sizes[i] || sizes[0] || '').trim();
+                if (/\d/.test(sz)) {
+                  const poss = splitTop(cs.backgroundPosition || '', ',');
+                  const cb = await composeBg(u[1], sz, poss[i] || poss[0], r.width, r.height);
+                  if (cb) layers.push({ type: 'image', bytes: cb, mode: 'FILL' });
+                  continue;
+                }
                 const bytes = await loadImage(u[1]);
                 if (bytes) layers.push({ type: 'image', bytes, mode: (sizes[i] || sizes[0]) === 'contain' ? 'FIT' : 'FILL' });
               }
@@ -606,6 +687,9 @@
       async function walk(el, out) {
         const tag = el.tagName.toLowerCase();
         if (SKIP.has(tag)) return;
+        // <details> đóng: trình duyệt không hiển thị phần thân, chỉ <summary>
+        const par = el.parentElement;
+        if (par && par.tagName === 'DETAILS' && !par.open && tag !== 'summary') return;
         const cs = win.getComputedStyle(el);
         if (cs.display === 'none' || cs.visibility === 'hidden') return;
         const op = parseFloat(cs.opacity);
@@ -650,7 +734,10 @@
                 target.push(mkText(value, { x: r.x + pl, y: r.y + pt, width: r.width - pl - pr, height: lh }, cs, color, true));
               } else {
                 const w = Math.max(1, r.width - pl - pr);
-                const rect = { x: r.x + pl, y: r.y + r.height / 2 - lh / 2, width: w, height: lh };
+                // căn giữa trong vùng nội dung (trừ padding): input form-floating có padding-top lớn
+                const ct = r.y + px(cs.borderTopWidth) + px(cs.paddingTop);
+                const cb = r.y + r.height - px(cs.borderBottomWidth) - px(cs.paddingBottom);
+                const rect = { x: r.x + pl, y: (ct + cb) / 2 - lh / 2, width: w, height: lh };
                 const tn = mkText(value, rect, cs, color, false);
                 if (cs.textAlign === 'center') tn.x = r.x + (r.width - w) / 2;
                 target.push(tn);
@@ -762,10 +849,28 @@
       const flow = kids.filter((c) => !c.abs);
       const abs = kids.filter((c) => c.abs);
       if (!flow.length) return;
-      const plan = planFlow(n, flow);
-      if (!plan) return;
+      let plan = planFlow(n, flow);
+      let neg = [];
+      if (!plan) {
+        // Margin âm: con nhô ra ngoài vùng nội dung thì Auto Layout không dựng được.
+        // Tách con đó ra thành layer tuyệt đối, giữ chỗ bằng 1 khối trong suốt rồi dựng lại luồng.
+        const pd = (mOf(n).pad || [0, 0, 0, 0]);
+        const xs = n.x + pd[3], ys = n.y + pd[0];
+        neg = flow.filter((c) => c.y < ys - TOL || c.x < xs - TOL);
+        if (neg.length && neg.length < flow.length) {
+          const rest = flow.filter((c) => !neg.includes(c));
+          neg.forEach((c) => {
+            c.abs = true;
+            const x0 = Math.max(c.x, xs), y0 = Math.max(c.y, ys);
+            const w = c.x + c.w - x0, h = c.y + c.h - y0;
+            if (w > 0.5 && h > 0.5) rest.push({ t: 'box', name: 'spacer', spacer: true, x: x0, y: y0, w, h, fills: [], children: [], sz: ['FIXED', 'FIXED'], cons: c.cons });
+          });
+          plan = planFlow(n, rest);
+        }
+        if (!plan) { neg.forEach((c) => { c.abs = false; }); return; }
+      }
       n.layout = plan.layout;
-      n.children = plan.ordered.concat(abs);
+      n.children = plan.ordered.concat(abs, neg);
       n.hugH = plan.hugH; n.hugV = plan.hugV; n.softH = plan.softH; n.softV = plan.softV;
       n.softKids = plan.softKids;
     }

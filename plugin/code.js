@@ -4,6 +4,9 @@
 figma.showUI(__html__, { width: 380, height: 620, themeColors: true });
 
 const createdRoots = [];
+// Constraints áp sau khi dựng xong cả cây: nếu đặt sớm, khi khung cha còn đổi kích thước
+// (Fill co lại lúc thêm node anh em) thì con neo đáy/giữa sẽ bị trượt.
+const pendingCons = [];
 const fontCache = new Map();
 
 const WEIGHT_STYLE = {
@@ -120,9 +123,7 @@ function place(node, n, parent, ox, oy) {
   if (!auto || n.abs) {
     node.x = n.x - ox;
     node.y = n.y - oy;
-    if (n.cons) {
-      try { node.constraints = n.cons; } catch (e) { /* bỏ qua */ }
-    }
+    if (n.cons) pendingCons.push([node, n.cons]);
   }
 }
 
@@ -135,7 +136,8 @@ function applySizing(node, n, parent) {
 function applyLayout(frame, lay) {
   frame.layoutMode = lay.dir === 'H' ? 'HORIZONTAL' : 'VERTICAL';
   if (lay.wrap) frame.layoutWrap = 'WRAP';
-  frame.itemSpacing = lay.spacing || 0;
+  // Wrap: bớt chút xíu để làm tròn số lẻ không đẩy phần tử cuối hàng xuống dòng mới
+  frame.itemSpacing = lay.wrap ? Math.max(0, (lay.spacing || 0) - 0.1) : (lay.spacing || 0);
   if (lay.wrap) frame.counterAxisSpacing = lay.crossSpacing || 0;
   frame.paddingTop = lay.pad[0];
   frame.paddingRight = lay.pad[1];
@@ -172,10 +174,29 @@ async function buildText(n, parent, ox, oy) {
 
   const auto = isAuto(parent) && !n.abs;
   const wFill = auto && n.sz && n.sz[0] === 'FILL';
-  if (n.multiline || wFill) {
+  if (n.hard) {
+    // Đã chốt xuống dòng cứng theo trình duyệt: không cho Figma tự wrap thêm.
+    t.textAutoResize = 'WIDTH_AND_HEIGHT';
+    let ls0 = n.letterSpacing || 0;
+    for (let i = 0; i < 8 && t.width > n.w; i++) {
+      ls0 -= 0.1 * Math.max(1, n.fontSize / 12);
+      t.letterSpacing = { value: ls0, unit: 'PIXELS' };
+    }
+    if (auto && parent.layoutMode === 'VERTICAL') {
+      t.layoutAlign = n.align === 'CENTER' ? 'CENTER' : n.align === 'RIGHT' ? 'MAX' : 'MIN';
+    }
+    if (auto) return;
+  } else if (n.multiline || wFill) {
     t.textAutoResize = 'HEIGHT';
     t.resize(Math.max(1, n.w), t.height);
     t.textAutoResize = 'HEIGHT';
+    // Font trong Figma hơi rộng hơn trình duyệt nên dễ rớt thêm dòng: nén chữ nhẹ cho tới khi đủ số dòng.
+    const want = n.lines && n.lineHeight ? n.lines * n.lineHeight : 0;
+    let ls = n.letterSpacing || 0;
+    for (let i = 0; want && i < 6 && t.height > want + 1; i++) {
+      ls -= 0.1 * Math.max(1, n.fontSize / 12);
+      t.letterSpacing = { value: ls, unit: 'PIXELS' };
+    }
   } else {
     t.textAutoResize = 'WIDTH_AND_HEIGHT';
   }
@@ -184,8 +205,50 @@ async function buildText(n, parent, ox, oy) {
     return;
   }
   t.x = n.x - ox;
+  if (n.hard) t.x += n.align === 'CENTER' ? (n.w - t.width) / 2 : n.align === 'RIGHT' ? n.w - t.width : 0;
   t.y = n.y + n.h / 2 - t.height / 2 - oy;
   if (n.abs && isAuto(parent)) t.layoutPositioning = 'ABSOLUTE';
+}
+
+const hasFill = (n) => (n.fills || []).some((f) => f.type !== 'solid' || f.a > 0);
+
+// Frame không có nền mà đặt shadow thì Figma đổ bóng lên cả con (chữ bị đúp). Thay bằng
+// hình "bóng trừ hộp" nằm sau frame, giống CSS (bóng chỉ hiện ngoài viền).
+function buildOuterShadows(n, parent, ox, oy) {
+  const auto = isAuto(parent);
+  // Dựng trong frame bọc riêng (không Auto Layout) để vị trí hình bóng không bị Auto Layout của cha xê dịch.
+  const wrap = figma.createFrame();
+  parent.appendChild(wrap);
+  wrap.name = 'shadow';
+  wrap.fills = [];
+  wrap.clipsContent = false;
+  wrap.resize(Math.max(0.01, n.w), Math.max(0.01, n.h));
+  if (auto) wrap.layoutPositioning = 'ABSOLUTE';
+  wrap.x = n.x - ox;
+  wrap.y = n.y - oy;
+  for (const sh of n.shadows) {
+    if (sh.inset) continue;
+    const mk = (x, y, w, h) => {
+      const r = figma.createRectangle();
+      wrap.appendChild(r);
+      r.resize(Math.max(0.01, w), Math.max(0.01, h));
+      r.x = x;
+      r.y = y;
+      if (n.radius) {
+        const maxR = Math.min(w, h) / 2;
+        const [tl, tr, br, bl] = n.radius.map((v) => Math.min(v, maxR));
+        r.topLeftRadius = tl; r.topRightRadius = tr; r.bottomRightRadius = br; r.bottomLeftRadius = bl;
+      }
+      return r;
+    };
+    const sp = sh.spread || 0;
+    const shape = mk(sh.x - sp, sh.y - sp, n.w + sp * 2, n.h + sp * 2);
+    shape.fills = [{ type: 'SOLID', color: { r: sh.color.r, g: sh.color.g, b: sh.color.b }, opacity: sh.color.a }];
+    const hole = mk(0, 0, n.w, n.h);
+    const cut = figma.subtract([shape, hole], wrap);
+    cut.name = 'shadow';
+    if (sh.blur > 0) cut.effects = [{ type: 'LAYER_BLUR', radius: sh.blur / 2, visible: true }];
+  }
 }
 
 async function buildNode(n, parent, ox, oy) {
@@ -210,6 +273,10 @@ async function buildNode(n, parent, ox, oy) {
   }
 
   // box (kể cả ảnh / icon: ảnh là fill của box)
+  if (n.shadows && n.shadows.length && !hasFill(n)) {
+    try { buildOuterShadows(n, parent, ox, oy); } catch (e) { /* bỏ qua bóng */ }
+    n = Object.assign({}, n, { shadows: [] });
+  }
   const frame = figma.createFrame();
   parent.appendChild(frame);
   frame.resize(Math.max(0.01, n.w), Math.max(0.01, n.h));
@@ -240,6 +307,9 @@ async function importTree(msg) {
   }
   frame.name = msg.name || root.name || 'HTML';
   for (const c of root.children || []) await buildNode(c, frame, 0, 0);
+  for (const [node, cons] of pendingCons.splice(0)) {
+    try { node.constraints = cons; } catch (e) { /* bỏ qua */ }
+  }
   createdRoots.push(frame);
 }
 
